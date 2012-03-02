@@ -1,0 +1,28 @@
+{% load timesheettags %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Zeiterfassung: Report für {{ currentCustomer.name }}</title>
+    </head>
+    <body>
+        <a href="/">Uhr</a>
+        <h1>Report für {{ currentCustomer.name }}</h1>
+        <table>
+            {% for entry in entries %}
+                <tr>
+                    <td>{{ entry.start|date:"d.h.Y H.i" }} - {{ entry.end|date:"d.h.Y H.i" }}</td><td>{{ entry.duration|timedelta:"%h:%m" }}</td><td>({{ entry.duration|timedelta:"%oh" }})</td><td>{{ entry.comment }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <a href="/customer_report.csv/{{ currentCustomer.id }}/">CSV</a>
+        <h2>Weitere Kunden</h2>
+        <ul>
+            {% for customer in customers %}
+                {% if customer != currentCustomer %}
+                <li><a href="/customer_report/{{ customer.id }}/">{{ customer.name }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </body>
+</html>
