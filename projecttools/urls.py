@@ -9,5 +9,5 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r"^$", "timesheet.views.clock"),
     url(r"^login/", "django.contrib.auth.views.login", {"template_name": "timesheet/login.html"}),
-    url(r"^customer_report(\.(?P<format_identifier>\w+))?/(?P<customer_id>\d+)/$", "timesheet.views.customer_report")
+    url(r"^customer/(?P<customer_id>\d+)/report(\.(?P<format_identifier>\w+))?/", "timesheet.views.customer_report")
 )

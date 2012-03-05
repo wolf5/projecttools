@@ -46,15 +46,13 @@
             }            
             
         </script>
-        <title>Zeiterfassung: Uhr.</title>
+        <title>Zeiterfassung: Uhr für {{ currentCustomer.name }}</title>
     </head>
     <body>
     	{% if currentCustomer %}
-        	<a href="/customer_report/{{ currentCustomer.id }}/">Report</a>
+        	<a href="/customer/{{ currentCustomer.id }}/report/">Report</a>
         {% endif %}
-        <h1>Uhr</h1>
-        <div id="currentCustomer">{{ currentCustomer.name }}</div>
-        <div id="clock"></div>
+        <h1>Uhr für {{ currentCustomer.name }}: <span id="clock"></div></h1>
         <div>
             Kommentar: <input id="comment" type="text" size="40" name="comment" value="{{ topTaskEntry.comment }}" />
         </div>
@@ -88,7 +86,7 @@
         <table>
             {% for entry in entries %}
                 <tr>
-                    <td>{{ entry.customer.name }}</td><td>{{ entry.start|date:"d.h.Y H.i" }} - {{ entry.end|date:"d.h.Y H.i" }}</td><td>{{ entry.duration|timedelta:"%h:%m" }}</td><td>({{ entry.duration|timedelta:"%oh" }})</td><td>{{ entry.comment }}</td>
+                    <td><a href="/customer/{{ entry.customer.id }}/report/">{{ entry.customer.name }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.h.Y H.i" }} - {{ entry.end|date:"d.h.Y H.i" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|timedelta:"%h:%m" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|timedelta:"%oh" }})</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td>
                 </tr>
             {% endfor %}
         </table>

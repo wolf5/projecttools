@@ -11,18 +11,20 @@
         <table>
             {% for entry in entries %}
                 <tr>
-                    <td>{{ entry.start|date:"d.h.Y H.i" }} - {{ entry.end|date:"d.h.Y H.i" }}</td><td>{{ entry.duration|timedelta:"%h:%m" }}</td><td>({{ entry.duration|timedelta:"%oh" }})</td><td>{{ entry.comment }}</td>
+                    <td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.h.Y H.i" }} - {{ entry.end|date:"d.h.Y H.i" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|timedelta:"%h:%m" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|timedelta:"%oh" }})</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td>
                 </tr>
             {% endfor %}
         </table>
-        <a href="/customer_report.csv/{{ currentCustomer.id }}/">CSV</a>
-        <h2>Weitere Kunden</h2>
-        <ul>
-            {% for customer in customers %}
-                {% if customer != currentCustomer %}
-                <li><a href="/customer_report/{{ customer.id }}/">{{ customer.name }}</a></li>
-                {% endif %}
-            {% endfor %}
-        </ul>
+        <a href="/customer/{{ currentCustomer.id }}/report.csv/">CSV</a>
+        {% if customers.count > 1 %}
+	        <h2>Weitere Kunden</h2>
+	        <ul>
+	            {% for customer in customers %}
+	                {% if customer != currentCustomer %}
+	                <li><a href="/customer/{{ customer.id }}/report.csv">{{ customer.name }}</a></li>
+	                {% endif %}
+	            {% endfor %}
+	        </ul>
+        {% endif %}
     </body>
 </html>
