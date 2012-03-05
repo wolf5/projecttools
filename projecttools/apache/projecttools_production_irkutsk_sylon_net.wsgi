@@ -1,3 +1,6 @@
+import site
+site.addsitedir("/srv/python-environments/projecttools/lib/python2.7/site-packages")
+
 import os
 import sys
 
