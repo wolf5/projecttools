@@ -1,6 +1,9 @@
 import os
 import sys
 
+# Even though this might look like an ugly hack, this seems to be the way to go
+# (see the sys.path.append part in 
+# http://code.google.com/p/modwsgi/wiki/IntegrationWithDjango#Integration_With_Django)
 paths = ["/var/www/projecttools", "/var/www/projecttools/projecttools"]
 for path in paths:
 	if path not in sys.path:
