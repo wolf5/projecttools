@@ -1,15 +1,23 @@
-import os
+# Taken from http://blog.dscpl.com.au/2010/03/improved-wsgi-script-for-use-with.html
+
 import sys
 
-# Even though this might look like an ugly hack, this seems to be the way to go
-# (see the sys.path.append part in 
-# http://code.google.com/p/modwsgi/wiki/IntegrationWithDjango#Integration_With_Django)
-paths = ["/var/www/projecttools", "/var/www/projecttools/projecttools"]
-for path in paths:
-	if path not in sys.path:
-		sys.path.append(path)
+sys.path.insert(0, "/var/www/projecttools/projecttools")
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'projecttools.settings_production_irkutsk_sylon_net'
+import settings_production_irkutsk_sylon_net
+
+import django.core.management
+django.core.management.setup_environ(settings_production_irkutsk_sylon_net)
+utility = django.core.management.ManagementUtility()
+command = utility.fetch_command('runserver')
+
+command.validate()
+
+import django.conf
+import django.utils
+
+django.utils.translation.activate(django.conf.settings.LANGUAGE_CODE)
 
 import django.core.handlers.wsgi
+
 application = django.core.handlers.wsgi.WSGIHandler()
