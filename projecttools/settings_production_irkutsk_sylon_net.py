@@ -19,3 +19,5 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     '/var/www/projecttools/projecttools/templates'
 )
+
+STATIC_ROOT = "/var/www/projecttools/projecttools/sitestatic"
