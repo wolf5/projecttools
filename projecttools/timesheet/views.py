@@ -6,6 +6,7 @@ from constants import COMMAND_PAUSE, COMMAND_RESUME, STATE_PAUSED, STATE_RUNNING
 from models import Customer
 from models import Entry
 from django.template import RequestContext, Context, loader
+from datetime import timedelta
 
 def resumeFormFields():
     return '<input type="hidden" name="command" value="resume" /><input type="submit" value="Start" />'
@@ -41,7 +42,7 @@ def clock(request):
     else:
         state = STATE_PAUSED
         
-    customers = Customer.objects.all()
+    customers = Customer.objects.all().order_by("name")
     entries = Entry.objects.filter(owner = request.user).order_by("-start")
     currentCustomer = helpers.getCurrentCustomer(request.user)
     topTaskEntry = helpers.getTopTaskEntry(request.user)
@@ -49,7 +50,9 @@ def clock(request):
 
 def customer_report(request, customer_id, format_identifier):
     currentCustomer = Customer.objects.get(pk = customer_id)
-    customers = Customer.objects.all();
+    customers = Customer.objects.all().order_by("name");
+    
+    # Output CSV if so desired
     if format_identifier == "csv":
         entries = Entry.objects.filter(owner = request.user, customer = currentCustomer, end__isnull = False)
         template = loader.get_template("timesheet/customer_report.csv")
@@ -57,6 +60,14 @@ def customer_report(request, customer_id, format_identifier):
         response = HttpResponse(template.render(context), content_type = "text/csv");
         response["Content-Disposition"] = "inline; filename=\"Report-" + currentCustomer.name + ".csv\""
         return response
+    
+    # Output report as HTML
     else:
         entries = Entry.objects.filter(owner = request.user, customer = currentCustomer, end__isnull = False).order_by("-start")
-        return render_to_response("timesheet/customer_report.html", {"currentCustomer": currentCustomer, "entries": entries, "customers": customers, "format_identifier": format_identifier});
+        
+        # Iterate once over the entries to get the total hours. This might sound inefficient, but we assume there are not too many total entries anyways.
+        totalDuration = timedelta()
+        for entry in entries:
+            duration = entry.end - entry.start
+            totalDuration = totalDuration + duration
+        return render_to_response("timesheet/customer_report.html", {"currentCustomer": currentCustomer, "entries": entries, "customers": customers, "totalDuration": totalDuration});

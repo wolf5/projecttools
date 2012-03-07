@@ -11,9 +11,15 @@
         <table>
             {% for entry in entries %}
                 <tr>
-                    <td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.h.Y H.i" }} - {{ entry.end|date:"d.h.Y H.i" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|timedelta:"%h:%m" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|timedelta:"%oh" }})</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td>
+                    <td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.h.Y H.i" }} - {{ entry.end|date:"d.h.Y H.i" }}</a></td><td align="right"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%H:%m" }}</a></td><td align="right"><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%Oh" }})</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td>
                 </tr>
             {% endfor %}
+            <tr>
+            	<td><b>Total</b></td>
+            	<td>{{ totalDuration|duration:"%H:%m" }}</td>
+            	<td>({{ totalDuration|duration:"%Oh" }})</td>
+            	<td>&nbsp;</td>
+            </tr>
         </table>
         <a href="/customer/{{ currentCustomer.id }}/report.csv/">CSV</a>
         {% if customers.count > 1 %}

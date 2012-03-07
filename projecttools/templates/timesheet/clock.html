@@ -74,11 +74,11 @@
                         <li><b><i>{{ customer.name }}</i></b></li>
                     {% else %}
                         <li><form action="" method="post" id="customerresumeform{{ customer.id }}" style="margin: 0px;"><a href="" id="customerresumelink{{ customer.id }}"><i>{{ customer.name }}</i></a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ customer.id }}" /></form></li>
-                        <script type="text/javascript">$(document).ready(function() {$("#customerresumeform{{ customer.id }}").click(function() {$("#customerresumeform{{ customer.id }}").submit();return false;})});</script>
+                        <script type="text/javascript">$(document).ready(function() {$("#customerresumelink{{ customer.id }}").click(function() {$("#customerresumeform{{ customer.id }}").submit();return false;})});</script>
                     {% endif %}
                 {% else %}
                     <li><form action="" method="post" id="customerresumeform{{ customer.id }}" style="margin: 0px;"><a href="" id="customerresumelink{{ customer.id }}">{{ customer.name }}</a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ customer.id }}" /></form></li>
-                    <script type="text/javascript">$(document).ready(function() {$("#customerresumeform{{ customer.id }}").click(function() {$("#customerresumeform{{ customer.id }}").submit();return false;})});</script>
+                    <script type="text/javascript">$(document).ready(function() {$("#customerresumelink{{ customer.id }}").click(function() {$("#customerresumeform{{ customer.id }}").submit();return false;})});</script>
                 {% endif %}
             {% endfor %}
         </ul>
@@ -86,7 +86,7 @@
         <table>
             {% for entry in entries %}
                 <tr>
-                    <td><a href="/customer/{{ entry.customer.id }}/report/">{{ entry.customer.name }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.h.Y H.i" }} - {{ entry.end|date:"d.h.Y H.i" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|timedelta:"%h:%m" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|timedelta:"%oh" }})</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td>
+                    <td><a href="/customer/{{ entry.customer.id }}/report/">{{ entry.customer.name }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.h.Y H.i" }} - {{ entry.end|date:"d.h.Y H.i" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%h:%m" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%oh" }})</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td>
                 </tr>
             {% endfor %}
         </table>

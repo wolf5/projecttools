@@ -4,11 +4,12 @@ Created on Mar 2, 2012
 @author: timo
 '''
 from django import template
+from datetime import timedelta
 register = template.Library()
 import math
 
 @register.filter
-def timedelta(value, arg = "%h:%m"):
+def duration(value, arg = "%h:%m"):
     """
     Renders a timedelta in human-readable format. Each format identifier is
     preceded by a '%' and is one of:
@@ -23,6 +24,11 @@ def timedelta(value, arg = "%h:%m"):
     O -- hours, 2 decimals, values > 23 possible
     D -- days, integer
     """
+    
+    # Fail silently if the value is not a timedelta.
+    if not isinstance(value, timedelta):
+        return ""
+    
     totalSeconds = value.total_seconds()
     totalDays, remainder = divmod(totalSeconds, 86400)
     modHours, remainder = divmod(remainder, 3600)
@@ -69,4 +75,4 @@ def timedelta(value, arg = "%h:%m"):
                 niceOutput = niceOutput + c
     return niceOutput
     
-timedelta.is_safe = True
+duration.is_safe = True

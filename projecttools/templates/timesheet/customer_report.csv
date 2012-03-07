@@ -1,2 +1,2 @@
-{% load timesheettags %}{% for entry in entries %}"{{ entry.start|date:"d.h.Y" }}","{{ entry.start|date:"H:i" }}","{{ entry.end|date:"d.h.Y" }}","{{ entry.end|date:"H:i" }}","{{ entry.duration|timedelta:"%h:%m" }}","{{ entry.duration|timedelta:"%o" }}","{{ entry.comment }}"
+{% load timesheettags %}{% for entry in entries %}"{{ entry.start|date:"d.h.Y" }}","{{ entry.start|date:"H:i" }}","{{ entry.end|date:"d.h.Y" }}","{{ entry.end|date:"H:i" }}","{{ entry.duration|duration:"%H:%m" }}","{{ entry.duration|duration:"%O" }}","{{ entry.comment }}"
 {% endfor %}
