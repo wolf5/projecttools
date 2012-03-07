@@ -20,4 +20,4 @@ TEMPLATE_DIRS = (
     '/var/www/projecttools/projecttools/templates'
 )
 
-STATIC_ROOT = "/var/www/projecttools/projecttools/sitestatic"
+STATIC_ROOT = "/var/www/projecttools/projecttools/sitestatic/"
