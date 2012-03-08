@@ -22,13 +22,13 @@
             	<td>&nbsp;</td>
             </tr>
         </table>
-        <a href="/customer/{{ currentCustomer.id }}/report.csv/">CSV</a>
+        <a href="/customer/{{ currentCustomer.id }}/report.csv/">Als CSV herunterladen</a>
         {% if customers.count > 1 %}
 	        <h2>Weitere Kunden</h2>
 	        <ul>
 	            {% for customer in customers %}
 	                {% if customer != currentCustomer %}
-	                <li><a href="/customer/{{ customer.id }}/report.csv">{{ customer.name }}</a></li>
+	                <li><a href="/customer/{{ customer.id }}/report">{{ customer.name }}</a></li>
 	                {% endif %}
 	            {% endfor %}
 	        </ul>

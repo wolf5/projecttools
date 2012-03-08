@@ -89,7 +89,7 @@
 	                <script type="text/javascript">$(document).ready(function() {$("#resumelink").click(function() {$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
 	            {% else %}
 	                <li class="customerlist first"><form action="" method="post" id="pauseform" style="margin: 0px;"><a href="" id="pauselink">Stop</a><input type="hidden" name="command" value="pause" /></form></li>
-	                <script type="text/javascript">$(document).ready(function() {$("#pauseform").click(function() {$("#pauseform").submit();return false;})});</script>
+	                <script type="text/javascript">$(document).ready(function() {$("#pauselink").click(function() {$("#pauseform").submit();return false;})});</script>
 	            {% endif %}
 	        {% endif %}
             
