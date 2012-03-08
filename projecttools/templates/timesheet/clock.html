@@ -22,10 +22,26 @@
 					updateClock(new Date(), new Date());
                 {% endif %}
                 
-                // bind comment field blur handler
-                $("input#comment").blur(function() {
-                    $.post("/", {comment: $("input#comment").val()});
-                });
+                {% if state == "running" %}
+                	// post the comment if we leave the form
+	                $("input#comment").blur(function() {
+	                	$("form#commentform").submit();
+	                });
+	                
+	                // post the comment if we press enter
+	                $("input#comment").keypress(function(event) {
+	                	if (event.which == 13) {
+	                		$("form#commentform").submit();
+	                	}
+	                });
+	            {% else %}
+	            	$("input#comment").keypress(function(event) {
+	                	if (event.which == 13) {
+	                		$("input#comment").blur();
+	                		return false;
+	                	}
+	                });
+                {% endif %}
             });
             
             // Starts the clock
@@ -46,22 +62,30 @@
             }            
             
         </script>
-        <title>Zeiterfassung: Uhr für {{ currentCustomer.name }}</title>
+        {% if currentCustomer %}
+        	<title>Zeiterfassung: Uhr für {{ currentCustomer.name }}</title>
+       	{% else %}
+       		<title>Zeiterfassung</title>
+        {% endif %}
     </head>
     <body>
     	{% if currentCustomer %}
         	<a href="/customer/{{ currentCustomer.id }}/report/">Report</a>
+        	<h1>Uhr für {{ currentCustomer.name }}: <span id="clock"></div></h1>
+        {% else %}
+        	<h1>Uhr</h1>
         {% endif %}
-        <h1>Uhr für {{ currentCustomer.name }}: <span id="clock"></div></h1>
         <div>
-            Kommentar: <input id="comment" type="text" size="40" name="comment" value="{{ topTaskEntry.comment }}" />
+        	<form action="" method="post" id="commentform">
+            	Kommentar: <input id="comment" type="text" size="40" name="comment" value="{{ topTaskEntry.comment }}" />
+            </form>
         </div>
         <h2>Steuerung</h2>
         <ul>
         	{% if currentCustomer %}
 	            {% if state == "paused" %}
 	                <li><form action="" method="post" id="resumeform" style="margin: 0px;"><a href="" id="resumelink"><b>Start</b></a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ currentCustomer.id }}" /></form></li>
-	                <script type="text/javascript">$(document).ready(function() {$("#resumelink").click(function() {$("#resumeform").submit();return false;})});</script>
+	                <script type="text/javascript">$(document).ready(function() {$("#resumelink").click(function() {$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
 	            {% else %}
 	                <li><form action="" method="post" id="pauseform" style="margin: 0px;"><a href="" id="pauselink">Stop</a><input type="hidden" name="command" value="pause" /></form></li>
 	                <script type="text/javascript">$(document).ready(function() {$("#pauseform").click(function() {$("#pauseform").submit();return false;})});</script>
@@ -74,11 +98,11 @@
                         <li><b><i>{{ customer.name }}</i></b></li>
                     {% else %}
                         <li><form action="" method="post" id="customerresumeform{{ customer.id }}" style="margin: 0px;"><a href="" id="customerresumelink{{ customer.id }}"><i>{{ customer.name }}</i></a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ customer.id }}" /></form></li>
-                        <script type="text/javascript">$(document).ready(function() {$("#customerresumelink{{ customer.id }}").click(function() {$("#customerresumeform{{ customer.id }}").submit();return false;})});</script>
+                        <script type="text/javascript">$(document).ready(function() {$("#customerresumelink{{ customer.id }}").click(function() {$("#customerresumeform{{ customer.id }}").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#customerresumeform{{ customer.id }}").submit();return false;})});</script>
                     {% endif %}
                 {% else %}
                     <li><form action="" method="post" id="customerresumeform{{ customer.id }}" style="margin: 0px;"><a href="" id="customerresumelink{{ customer.id }}">{{ customer.name }}</a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ customer.id }}" /></form></li>
-                    <script type="text/javascript">$(document).ready(function() {$("#customerresumelink{{ customer.id }}").click(function() {$("#customerresumeform{{ customer.id }}").submit();return false;})});</script>
+                    <script type="text/javascript">$(document).ready(function() {$("#customerresumelink{{ customer.id }}").click(function() {$("#customerresumeform{{ customer.id }}").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#customerresumeform{{ customer.id }}").submit();return false;})});</script>
                 {% endif %}
             {% endfor %}
         </ul>

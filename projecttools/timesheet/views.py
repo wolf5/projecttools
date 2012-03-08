@@ -34,8 +34,9 @@ def clock(request):
         # set comment
         if "comment" in request.POST:
             topTaskEntry = helpers.getTopTaskEntry(request.user)
-            topTaskEntry.comment = request.POST["comment"]
-            topTaskEntry.save()
+            if topTaskEntry != None:
+                topTaskEntry.comment = request.POST["comment"]
+                topTaskEntry.save()
     
     if helpers.isAnyTaskRunning(request.user):
         state = STATE_RUNNING
