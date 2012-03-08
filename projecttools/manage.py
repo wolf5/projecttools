@@ -9,6 +9,9 @@ except ImportError:
     sys.exit(1)
 
 import settings
+ 
+import pydevd
+pydevd.patch_django_autoreload()
 
 if __name__ == "__main__":
     execute_manager(settings)

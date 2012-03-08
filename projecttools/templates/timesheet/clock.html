@@ -3,6 +3,7 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}main.css" media="screen" />
         <script type="text/javascript" src="{{ STATIC_URL }}jquery-1.7.1.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}ajaxcsrf.js"></script>
         <script type="text/javascript">
@@ -84,10 +85,10 @@
         <ul>
         	{% if currentCustomer %}
 	            {% if state == "paused" %}
-	                <li><form action="" method="post" id="resumeform" style="margin: 0px;"><a href="" id="resumelink"><b>Start</b></a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ currentCustomer.id }}" /></form></li>
+	                <li class="customerlist first"><form action="" method="post" id="resumeform" style="margin: 0px;"><a href="" id="resumelink">Start</a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ currentCustomer.id }}" /></form></li>
 	                <script type="text/javascript">$(document).ready(function() {$("#resumelink").click(function() {$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
 	            {% else %}
-	                <li><form action="" method="post" id="pauseform" style="margin: 0px;"><a href="" id="pauselink">Stop</a><input type="hidden" name="command" value="pause" /></form></li>
+	                <li class="customerlist first"><form action="" method="post" id="pauseform" style="margin: 0px;"><a href="" id="pauselink">Stop</a><input type="hidden" name="command" value="pause" /></form></li>
 	                <script type="text/javascript">$(document).ready(function() {$("#pauseform").click(function() {$("#pauseform").submit();return false;})});</script>
 	            {% endif %}
 	        {% endif %}
@@ -95,9 +96,9 @@
             {% for customer in customers %}
                 {% if customer == currentCustomer %}
                     {% if state == "running" %}
-                        <li><b><i>{{ customer.name }}</i></b></li>
+                        <li><b>{{ customer.name }}</b></li>
                     {% else %}
-                        <li><form action="" method="post" id="customerresumeform{{ customer.id }}" style="margin: 0px;"><a href="" id="customerresumelink{{ customer.id }}"><i>{{ customer.name }}</i></a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ customer.id }}" /></form></li>
+                        <li><form action="" method="post" id="customerresumeform{{ customer.id }}" style="margin: 0px;"><a href="" id="customerresumelink{{ customer.id }}"><b>{{ customer.name }}</b></a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ customer.id }}" /></form></li>
                         <script type="text/javascript">$(document).ready(function() {$("#customerresumelink{{ customer.id }}").click(function() {$("#customerresumeform{{ customer.id }}").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#customerresumeform{{ customer.id }}").submit();return false;})});</script>
                     {% endif %}
                 {% else %}
