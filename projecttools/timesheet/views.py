@@ -33,7 +33,7 @@ def clock(request):
             
         # set comment
         if "comment" in request.POST:
-            topTaskEntry = helpers.getTopTaskEntry(request.user)
+            topTaskEntry = helpers.getNewestTaskEntry(request.user)
             if topTaskEntry != None:
                 topTaskEntry.comment = request.POST["comment"]
                 topTaskEntry.save()
@@ -46,7 +46,7 @@ def clock(request):
     customers = Customer.objects.all().order_by("name")
     entries = Entry.objects.filter(owner = request.user).order_by("-start")
     currentCustomer = helpers.getCurrentCustomer(request.user)
-    topTaskEntry = helpers.getTopTaskEntry(request.user)
+    topTaskEntry = helpers.getNewestTaskEntry(request.user)
     return render_to_response("timesheet/clock.html", {"state": state, "customers": customers, "currentCustomer": currentCustomer, "entries": entries, "topTaskEntry": topTaskEntry}, RequestContext(request))
 
 def customer_report(request, customer_id, format_identifier):
