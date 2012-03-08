@@ -111,7 +111,7 @@
         <table>
             {% for entry in entries %}
                 <tr>
-                    <td><a href="/customer/{{ entry.customer.id }}/report/">{{ entry.customer.name }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.h.Y H.i" }} - {{ entry.end|date:"d.h.Y H.i" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%h:%m" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%oh" }})</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td>
+                    <td><a href="/customer/{{ entry.customer.id }}/report/">{{ entry.customer.name }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.m.Y H.i" }} - {{ entry.end|date:"d.m.Y H.i" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%h:%m" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%oh" }})</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td>
                 </tr>
             {% endfor %}
         </table>

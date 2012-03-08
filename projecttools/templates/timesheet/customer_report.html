@@ -12,7 +12,7 @@
         <table>
             {% for entry in entries %}
                 <tr>
-                    <td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.h.Y H.i" }} - {{ entry.end|date:"d.h.Y H.i" }}</a></td><td align="right"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%H:%m" }}</a></td><td align="right"><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%Oh" }})</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td>
+                    <td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.m.Y H.i" }} - {{ entry.end|date:"d.m.Y H.i" }}</a></td><td align="right"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%H:%m" }}</a></td><td align="right"><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%Oh" }})</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td>
                 </tr>
             {% endfor %}
             <tr>
