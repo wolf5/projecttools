@@ -85,10 +85,10 @@
         <ul>
         	{% if currentCustomer %}
 	            {% if state == "paused" %}
-	                <li class="customerlist first"><form action="" method="post" id="resumeform" style="margin: 0px;"><a href="" id="resumelink">Start</a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ currentCustomer.id }}" /></form></li>
+	                <li class="pauseresume"><form action="" method="post" id="resumeform" style="margin: 0px;"><a href="" id="resumelink">Start</a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ currentCustomer.id }}" /></form></li>
 	                <script type="text/javascript">$(document).ready(function() {$("#resumelink").click(function() {$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
 	            {% else %}
-	                <li class="customerlist first"><form action="" method="post" id="pauseform" style="margin: 0px;"><a href="" id="pauselink">Stop</a><input type="hidden" name="command" value="pause" /></form></li>
+	                <li class="pauseresume"><form action="" method="post" id="pauseform" style="margin: 0px;"><a href="" id="pauselink">Stop</a><input type="hidden" name="command" value="pause" /></form></li>
 	                <script type="text/javascript">$(document).ready(function() {$("#pauselink").click(function() {$("#pauseform").submit();return false;})});</script>
 	            {% endif %}
 	        {% endif %}
