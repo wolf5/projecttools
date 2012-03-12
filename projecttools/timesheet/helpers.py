@@ -34,6 +34,7 @@ def pause(user):
     """
     if isAnyTaskRunning(user):
         topTaskEntry = getNewestTaskEntry(user)
+        # TODO: If the end is not on the same day as the start, create split entries accordingly.
         topTaskEntry.end = datetime.now()
         topTaskEntry.save()
     else:

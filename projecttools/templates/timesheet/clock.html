@@ -72,7 +72,7 @@
     </head>
     <body>
     	{% if currentCustomer %}
-        	<a href="/customer/{{ currentCustomer.id }}/report/">Report</a>
+        	<a href="/customer/{{ currentCustomer.id }}/report/{{ now|date:'Y' }}/{{ now|date:'m' }}/">Report</a>
         	<h1>Uhr für {{ currentCustomer.name }}: <span id="clock"></div></h1>
         {% else %}
         	<h1>Uhr</h1>

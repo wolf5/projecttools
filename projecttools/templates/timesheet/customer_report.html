@@ -8,7 +8,15 @@
     </head>
     <body>
         <a href="/">Uhr</a>
-        <h1>Report für {{ currentCustomer.name }}</h1>
+        {% if year %}
+        	{% if month %}
+        		<h1>Report für {{ currentCustomer.name }} für {{ currentYearAndMonth|date:"F" }} {{ currentYearAndMonth|date:"Y" }}</h1>
+        	{% else %}
+        		<h1>Report für {{ currentCustomer.name }} für {{ currentYearAndMonth|date:"Y" }}</h1>
+        	{% endif %}        	
+        {% else %}
+        	<h1>Report für {{ currentCustomer.name }}</h1>
+        {% endif %}
         <table>
             {% for entry in entries %}
                 <tr>
@@ -22,7 +30,27 @@
             	<td>&nbsp;</td>
             </tr>
         </table>
-        <a href="/customer/{{ currentCustomer.id }}/report.csv/">Als CSV herunterladen</a>
+        {% if year %}
+        	{% if month %}
+        		<a href="/customer/{{ currentCustomer.id }}/report.csv/{{ year }}/{{ month }}/">Als CSV herunterladen</a>
+        	{% else %}
+        		<a href="/customer/{{ currentCustomer.id }}/report.csv/{{ year }}/">Als CSV herunterladen</a>
+        	{% endif %}        	
+        {% else %}
+        	<a href="/customer/{{ currentCustomer.id }}/report.csv/">Als CSV herunterladen</a>
+        {% endif %}
+    	<h2>Nach Monaten</h2>
+    	<ul>
+    		{% for availableYearAndMonth in availableYearsAndMonths %}
+    			<li><a href="/customer/{{ currentCustomer.id }}/report/{{ availableYearAndMonth|date:'Y' }}/{{ availableYearAndMonth|date:'m' }}/">{{ availableYearAndMonth|date:"F Y" }}</a></li>
+    		{% endfor %}
+    	</ul>
+    	<h2>Nach Jahren</h2>
+    	<ul>
+    		{% for availableYear in availableYears %}
+    			<li><a href="/customer/{{ currentCustomer.id }}/report/{{ availableYear|date:'Y' }}/">{{ availableYear|date:"Y" }}</a></li>
+    		{% endfor %}
+    	</ul>
         {% if customers.count > 1 %}
 	        <h2>Weitere Kunden</h2>
 	        <ul>
