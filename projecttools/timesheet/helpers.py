@@ -5,6 +5,7 @@ Created on Mar 2, 2012
 '''
 from models import Entry
 from datetime import datetime
+import urllib 
 
 def resume(user, customer):
     """
@@ -64,6 +65,22 @@ def getNewestTaskEntry(user):
 
 def getAvailableReports(user):
     """
-    Retrieve the years-and-monts combinations for which the given user
+    Retrieve the years-and-months combinations for which the given user
     has reports available.
     """
+
+def createContentDispositionAttachmentString(filename, request):
+    """
+    Creates the "Content-Disposition: attachment..." etc. string for use
+    in an HTTP header and tries to get the encoding right, depending on
+    the browser (not entirely possible for all cases, though.)
+    
+    See http://greenbytes.de/tech/tc2231/#attwithfnrawpctenclong and
+    http://greenbytes.de/tech/tc2231/#attwithfn2231utf8 for documentation.
+    """
+    if (request.META["HTTP_USER_AGENT"].find("Safari") != -1 and request.META["HTTP_USER_AGENT"].find("Chrome") == -1):
+        # Safari
+        return "attachment; filename=\"" + filename.encode("utf-8") + "\""
+    else:
+        # Everyone else
+        return "attachment; filename*=UTF-8''" + urllib.quote(filename.encode("utf-8"))

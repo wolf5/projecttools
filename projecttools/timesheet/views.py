@@ -9,7 +9,6 @@ from django.template import Context, loader
 from datetime import timedelta
 import datetime
 from django.template.defaultfilters import date as djangoDate
-import urllib 
 
 def resumeFormFields():
     return '<input type="hidden" name="command" value="resume" /><input type="submit" value="Start" />'
@@ -52,6 +51,9 @@ def clock(request):
     topTaskEntry = helpers.getNewestTaskEntry(request.user)
     return render(request, "timesheet/clock.html", {"state": state, "customers": customers, "currentCustomer": currentCustomer, "entries": entries, "topTaskEntry": topTaskEntry, "now": datetime.datetime.now()})
 
+# Customer report view.
+# This view requires the user to be logged in.
+@login_required
 def customer_report(request, customer_id, format_identifier, year, month):
     
     # coerce type
@@ -94,20 +96,20 @@ def customer_report(request, customer_id, format_identifier, year, month):
     
     if year:
         if month:
-            csvFilename = urllib.quote("Timesheet Report " + currentCustomer.name + " " + djangoDate(currentYearAndMonth, "Y") + "-" + djangoDate(currentYearAndMonth, "m") + ".csv")
+            csvFilename = "Timesheet Report " + currentCustomer.name + " " + djangoDate(currentYearAndMonth, "F") + " " + djangoDate(currentYearAndMonth, "Y") + ".csv"
         else:
-            csvFilename = urllib.quote("Timesheet Report " + currentCustomer.name + " " + djangoDate(currentYearAndMonth, "Y") + ".csv")
+            csvFilename = "Timesheet Report " + currentCustomer.name + " " + djangoDate(currentYearAndMonth, "Y") + ".csv"
     else:
-        csvFilename = urllib.quote("Timesheet Report " + currentCustomer.name + ".csv")
+        csvFilename = "Timesheet Report " + currentCustomer.name + ".csv"
     
     # Output CSV if so desired
     if format_identifier == "csv":
         template = loader.get_template("timesheet/customer_report.csv")
         context = Context({"currentCustomer": currentCustomer, "entries": entries, "customers": customers, "format_identifier": format_identifier})
         response = HttpResponse(template.render(context), content_type = "text/csv");
-        response["Content-Disposition"] = "inline; filename=\"" + csvFilename + "\""
+        response["Content-Disposition"] = helpers.createContentDispositionAttachmentString(csvFilename, request)
         return response
-    
+
     # Output report as HTML
     else:
         # Most recent at the top
