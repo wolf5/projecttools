@@ -7,6 +7,14 @@
         <script type="text/javascript" src="{{ STATIC_URL }}jquery-1.7.1.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}ajaxcsrf.js"></script>
         <script type="text/javascript">
+	        // This is an attempt to measure the time difference between the server
+	        // and the client in order to avoid negative time displays. Note that
+	        // this will never succeed entirely due to transmission time.
+	        var serverDate = new Date({{ serverTime|date:'Y, n-1, j, G, i, s, u/1000' }});
+	        var clientDate = new Date();
+	        var differencems = clientDate.getMilliseconds() - serverDate.getMilliseconds();
+		</script>
+        <script type="text/javascript">
             
             // When document is ready
             $(document).ready(function() {
@@ -48,6 +56,7 @@
             
             // Starts the clock
             function startClock(startDate) {
+            	startDate.setMilliseconds(startDate.getMilliseconds() + differencems);
                 updateClock(startDate, new Date());
                 setInterval(function() {updateClock(startDate, new Date())}, 1000)
             }
@@ -72,7 +81,7 @@
     </head>
     <body>
     	{% if currentCustomer %}
-        	<a href="/customer/{{ currentCustomer.id }}/report/{{ now|date:'Y' }}/{{ now|date:'m' }}/">Report</a>
+        	<a href="/customer/{{ currentCustomer.id }}/report/{{ serverTime|date:'Y' }}/{{ serverTime|date:'m' }}/">Report</a>
         	<h1>Uhr für {{ currentCustomer.name }}: <span id="clock"></div></h1>
         {% else %}
         	<h1>Uhr</h1>

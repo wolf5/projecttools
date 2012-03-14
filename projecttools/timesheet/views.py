@@ -49,7 +49,7 @@ def clock(request):
     entries = Entry.objects.filter(owner = request.user).order_by("-start")
     currentCustomer = helpers.getCurrentCustomer(request.user)
     topTaskEntry = helpers.getNewestTaskEntry(request.user)
-    return render(request, "timesheet/clock.html", {"state": state, "customers": customers, "currentCustomer": currentCustomer, "entries": entries, "topTaskEntry": topTaskEntry, "now": datetime.datetime.now()})
+    return render(request, "timesheet/clock.html", {"state": state, "customers": customers, "currentCustomer": currentCustomer, "entries": entries, "topTaskEntry": topTaskEntry, "serverTime": datetime.datetime.now()})
 
 # Customer report view.
 # This view requires the user to be logged in.
