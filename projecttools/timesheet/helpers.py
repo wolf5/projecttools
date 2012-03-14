@@ -5,25 +5,28 @@ Created on Mar 2, 2012
 '''
 from models import Entry
 from datetime import datetime
+from datetime import timedelta
 import urllib 
 
-def resume(user, customer):
+def resume(user, customer, delay = 0):
     """
-    Start/Resume the current task
+    Start/Resume the current task. Delay specifies how far back (in minutes) the task is started.
     """
     # first step: check whether there already is a task running
     if not isAnyTaskRunning(user):
         # no task running, so let's create a new entry
-        newTaskEntry = Entry(owner = user, customer = customer, start = datetime.now())
+        start = datetime.now() - timedelta(0, 0, 0, 0, delay)
+        newTaskEntry = Entry(owner = user, customer = customer, start = start)
         newTaskEntry.save()
     else:
         # there is a task running, so check whether it is for the same customer
-        topTaskEntry = getNewestTaskEntry(user)
+        topTaskEntry = getCurrentTaskEntry(user)
         if topTaskEntry.customer != customer:
             # not for the same customer, so finish the current task and start a new one
             topTaskEntry.end = datetime.now()
             topTaskEntry.save()
-            newTaskEntry = Entry(owner = user, customer = customer, start = datetime.now())
+            start = datetime.now() - timedelta(0, 0, 0, 0, delay)
+            newTaskEntry = Entry(owner = user, customer = customer, start = start)
             newTaskEntry.save()
         else:
             # for the same customer, so this is a duplicate request. do nothing.
@@ -34,7 +37,7 @@ def pause(user):
     Stop/Pause the current task
     """
     if isAnyTaskRunning(user):
-        topTaskEntry = getNewestTaskEntry(user)
+        topTaskEntry = getCurrentTaskEntry(user)
         # TODO: If the end is not on the same day as the start, create split entries accordingly.
         topTaskEntry.end = datetime.now()
         topTaskEntry.save()
@@ -45,23 +48,44 @@ def isAnyTaskRunning(user):
     """
     Returns True if there is a task running for the given user.
     """
-    return Entry.objects.filter(owner = user, end__isnull = True).exists()
+    return getRunningTask(user) != None
 
 def getCurrentCustomer(user):
     """
     Get the currently selected customer for the given user.
     """
-    topTaskEntry = getNewestTaskEntry(user)
+    topTaskEntry = getCurrentTaskEntry(user)
     if topTaskEntry != None:
         return topTaskEntry.customer
     else:
         return None
 
-def getNewestTaskEntry(user):
+def getRunningTask(user):
     """
-    Retrieve the most recent task entry for the given user.
+    Returns the currently running task for the given user, if any.
+    """
+    runningTaskQuerySet = Entry.objects.filter(owner = user, end__isnull = True)
+    if len(runningTaskQuerySet) == 1:
+        return runningTaskQuerySet[0]
+    else:
+        return None
+
+def getMostRecentTask(user):
+    """
+    Returns the most recent task, running or not.
     """
     return next(iter(Entry.objects.filter(owner = user).order_by("-start")), None)
+
+def getCurrentTaskEntry(user):
+    """
+    Returns either tue currently running task for the given user, or the most recent task.
+    """
+    # If there's a running task, return it
+    runningTask = getRunningTask(user)
+    if runningTask:
+        return runningTask
+    else:
+        return getMostRecentTask(user)
 
 def getAvailableReports(user):
     """

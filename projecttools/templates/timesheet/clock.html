@@ -99,8 +99,14 @@
         <ul>
         	{% if currentCustomer %}
 	            {% if state == "paused" %}
-	                <li class="pauseresume"><form action="" method="post" id="resumeform" style="margin: 0px;"><a href="" id="resumelink">Start</a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ currentCustomer.id }}" /></form></li>
+	                <li class="pauseresume"><form action="" method="post" id="resumeform" style="margin: 0px;"><a href="" id="resumelink">Start</a> (vor <a href="" id="resumelink5m">5m</a> <a href="" id="resumelink10m">10m</a> <a href="" id="resumelink15m">15m</a> <a href="" id="resumelink30m">30m</a> <a href="" id="resumelink1h">1h</a> <a href="" id="resumelink2h">2h</a>)<input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ currentCustomer.id }}" /><input type="hidden" id="delay" name="delay" value="0"/></form></li>
 	                <script type="text/javascript">$(document).ready(function() {$("#resumelink").click(function() {$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
+	                <script type="text/javascript">$(document).ready(function() {$("#resumelink5m").click(function() {$("#resumeform input#delay").val(5);$("#resumeform").submit();return false;})});</script>
+	                <script type="text/javascript">$(document).ready(function() {$("#resumelink10m").click(function() {$("#resumeform input#delay").val(10);$("#resumeform").submit();return false;})});</script>
+	                <script type="text/javascript">$(document).ready(function() {$("#resumelink15m").click(function() {$("#resumeform input#delay").val(15);$("#resumeform").submit();return false;})});</script>
+	                <script type="text/javascript">$(document).ready(function() {$("#resumelink30m").click(function() {$("#resumeform input#delay").val(30);$("#resumeform").submit();return false;})});</script>
+	                <script type="text/javascript">$(document).ready(function() {$("#resumelink1h").click(function() {$("#resumeform input#delay").val(60);$("#resumeform").submit();return false;})});</script>
+	                <script type="text/javascript">$(document).ready(function() {$("#resumelink2h").click(function() {$("#resumeform input#delay").val(120);$("#resumeform").submit();return false;})});</script>
 	            {% else %}
 	                <li class="pauseresume"><form action="" method="post" id="pauseform" style="margin: 0px;"><a href="" id="pauselink">Stop</a><input type="hidden" name="command" value="pause" /></form></li>
 	                <script type="text/javascript">$(document).ready(function() {$("#pauselink").click(function() {$("#pauseform").submit();return false;})});</script>

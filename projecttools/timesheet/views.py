@@ -31,11 +31,14 @@ def clock(request):
             # resume command
             elif request.POST["command"] == COMMAND_RESUME:
                 customer = Customer.objects.get(pk = request.POST["customer"])
-                helpers.resume(request.user, customer)
+                if "delay" in request.POST:
+                    helpers.resume(request.user, customer, int(request.POST["delay"]))
+                else:
+                    helpers.resume(request.user, customer)
             
         # set comment
         if "comment" in request.POST:
-            topTaskEntry = helpers.getNewestTaskEntry(request.user)
+            topTaskEntry = helpers.getCurrentTaskEntry(request.user)
             if topTaskEntry != None:
                 topTaskEntry.comment = request.POST["comment"]
                 topTaskEntry.save()
@@ -48,7 +51,7 @@ def clock(request):
     customers = Customer.objects.all().order_by("name")
     entries = Entry.objects.filter(owner = request.user).order_by("-start")
     currentCustomer = helpers.getCurrentCustomer(request.user)
-    topTaskEntry = helpers.getNewestTaskEntry(request.user)
+    topTaskEntry = helpers.getCurrentTaskEntry(request.user)
     return render(request, "timesheet/clock.html", {"state": state, "customers": customers, "currentCustomer": currentCustomer, "entries": entries, "topTaskEntry": topTaskEntry, "serverTime": datetime.datetime.now()})
 
 # Customer report view.
