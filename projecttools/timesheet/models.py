@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import timedelta
+from django.core.exceptions import ValidationError
 
 class Customer(models.Model):
     name = models.CharField(max_length = 255, unique = True)
@@ -23,3 +24,7 @@ class Entry(models.Model):
             return self.end - self.start
         else:
             return timedelta(0)
+
+    def clean(self):
+        if self.start >= self.end:
+            raise ValidationError("Startzeit muss vor Endzeit liegen.")
