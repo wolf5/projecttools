@@ -80,10 +80,14 @@
         {% endif %}
     </head>
     <body>
+    	<div class="floatright">
+    		<a href="/logout/">Abmelden</a>
+    	</div>
     	{% if currentCustomer %}
-        	<a href="/customer/{{ currentCustomer.id }}/report/{{ serverTime|date:'Y' }}/{{ serverTime|date:'m' }}/">Report</a>
+        	<a href="/customer/{{ currentCustomer.id }}/report/{{ serverTime|date:'Y' }}/{{ serverTime|date:'m' }}/">Report</a> | <a href="/admin/">Admin</a>
         	<h1>Uhr für {{ currentCustomer.name }}: <span id="clock"></div></h1>
         {% else %}
+        	<a href="/admin/">Admin</a>
         	<h1>Uhr</h1>
         {% endif %}
         <div>
@@ -125,5 +129,6 @@
                 </tr>
             {% endfor %}
         </table>
+        Zeiterfassung &copy; 2012 <a href="mailto:twuersch@gmail.com">Timo Würsch</a>
     </body>
 </html>

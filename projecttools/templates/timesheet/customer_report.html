@@ -7,7 +7,10 @@
         <title>Zeiterfassung: Report für {{ currentCustomer.name }}</title>
     </head>
     <body>
-        <a href="/">Uhr</a>
+    	<div class="floatright">
+    		<a href="/logout/">Abmelden</a>
+    	</div>
+        <a href="/">Uhr</a> | <a href="/admin/">Admin</a>
         {% if year %}
         	{% if month %}
         		<h1>Report für {{ currentCustomer.name }} für {{ currentYearAndMonth|date:"F" }} {{ currentYearAndMonth|date:"Y" }}</h1>
@@ -61,5 +64,6 @@
 	            {% endfor %}
 	        </ul>
         {% endif %}
+        Zeiterfassung &copy; 2012 <a href="mailto:twuersch@gmail.com">Timo Würsch</a>
     </body>
 </html>

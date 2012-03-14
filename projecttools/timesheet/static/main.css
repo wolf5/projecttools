@@ -1,3 +1,7 @@
 li.pauseresume {
 	margin-bottom: 1em;
 }
+
+.floatright {
+	float: right;
+}
