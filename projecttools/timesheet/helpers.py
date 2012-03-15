@@ -8,7 +8,7 @@ from datetime import datetime
 from datetime import timedelta
 import urllib 
 
-def resume(user, customer, delay = 0):
+def resume(user, customer, comment = "", delay = 0):
     """
     Start/Resume the current task. Delay specifies how far back (in minutes) the task is started.
     """
@@ -16,7 +16,7 @@ def resume(user, customer, delay = 0):
     if not isAnyTaskRunning(user):
         # no task running, so let's create a new entry
         start = datetime.now() - timedelta(0, 0, 0, 0, delay)
-        newTaskEntry = Entry(owner = user, customer = customer, start = start)
+        newTaskEntry = Entry(owner = user, customer = customer, start = start, comment = comment)
         newTaskEntry.save()
     else:
         # there is a task running, so check whether it is for the same customer
@@ -26,7 +26,7 @@ def resume(user, customer, delay = 0):
             topTaskEntry.end = datetime.now()
             topTaskEntry.save()
             start = datetime.now() - timedelta(0, 0, 0, 0, delay)
-            newTaskEntry = Entry(owner = user, customer = customer, start = start)
+            newTaskEntry = Entry(owner = user, customer = customer, start = start, comment = comment)
             newTaskEntry.save()
         else:
             # for the same customer, so this is a duplicate request. do nothing.
@@ -36,11 +36,26 @@ def pause(user):
     """
     Stop/Pause the current task
     """
+    # TODO: If the end is not on the same day as the start, create split entries accordingly.
     if isAnyTaskRunning(user):
         topTaskEntry = getCurrentTaskEntry(user)
-        # TODO: If the end is not on the same day as the start, create split entries accordingly.
         topTaskEntry.end = datetime.now()
         topTaskEntry.save()
+    else:
+        pass
+    
+def pauseAndResume(user, duration, comment):
+    """
+    Insert a break with the given duration, i.e. pause the given duration before
+    and then immediately resume the task.
+    """
+    if isAnyTaskRunning(user):
+        topTaskEntry = getCurrentTaskEntry(user)
+        topTaskEntry.end = datetime.now() - timedelta(0, 0, 0, 0, duration)
+        topTaskEntry.comment = comment
+        topTaskEntry.save()
+        newTaskEntry = Entry(owner = user, customer = getCurrentCustomer(user), start = datetime.now(), comment = comment)
+        newTaskEntry.save()
     else:
         pass
 

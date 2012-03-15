@@ -9,6 +9,7 @@ from django.template import Context, loader
 from datetime import timedelta
 import datetime
 from django.template.defaultfilters import date as djangoDate
+from projecttools.timesheet.constants import COMMAND_PAUSE_AND_RESUME
 
 def resumeFormFields():
     return '<input type="hidden" name="command" value="resume" /><input type="submit" value="Start" />'
@@ -23,25 +24,36 @@ def clock(request):
 
     # POST request
     if request.method == "POST":
-        if "command" in request.POST:
-            # pause command
-            if request.POST["command"] == COMMAND_PAUSE:
-                helpers.pause(request.user)
-                
-            # resume command
-            elif request.POST["command"] == COMMAND_RESUME:
-                customer = Customer.objects.get(pk = request.POST["customer"])
-                if "delay" in request.POST:
-                    helpers.resume(request.user, customer, int(request.POST["delay"]))
-                else:
-                    helpers.resume(request.user, customer)
-            
-        # set comment
-        if "comment" in request.POST:
+        # if we only change the comment
+        if "comment" in request.POST and not "command" in request.POST:
             topTaskEntry = helpers.getCurrentTaskEntry(request.user)
             if topTaskEntry != None:
                 topTaskEntry.comment = request.POST["comment"]
                 topTaskEntry.save()
+        
+        # if we pause/resume a task
+        if "command" in request.POST:
+            # If there's a comment, read it from the request
+            if "comment" in request.POST:
+                comment = request.POST["comment"]
+            else:
+                comment = ""
+            
+            # pause command
+            if request.POST["command"] == COMMAND_PAUSE:
+                helpers.pause(request.user)
+            
+            # pause and immediately resume command
+            elif request.POST["command"] == COMMAND_PAUSE_AND_RESUME:
+                helpers.pauseAndResume(request.user, int(request.POST["duration"]), comment)
+            
+            # resume command
+            elif request.POST["command"] == COMMAND_RESUME:
+                customer = Customer.objects.get(pk = request.POST["customer"])
+                if "delay" in request.POST:
+                    helpers.resume(request.user, customer, comment, int(request.POST["delay"]))
+                else:
+                    helpers.resume(request.user, customer, comment)
     
     if helpers.isAnyTaskRunning(request.user):
         state = STATE_RUNNING
