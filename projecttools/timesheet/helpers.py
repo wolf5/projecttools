@@ -12,21 +12,16 @@ def resume(user, customer, comment = "", delay = 0):
     """
     Start/Resume the current task. Delay specifies how far back (in minutes) the task is started.
     """
-
-    # retrieve current task    
-    topTaskEntry = getCurrentTaskEntry(user)
-    
-    # make sure tasks don't overlap
-    if datetime.now() - timedelta(0, 0, 0, 0, delay) > topTaskEntry.end:
-        # everything fine
-        start = datetime.now() - timedelta(0, 0, 0, 0, delay)
-    else:
-        # the new task would overlap with the old task, so start the new task one second after
-        # the end of the old task
-        start = topTaskEntry.end + timedelta(0, 1)
         
+    topTaskEntry = getCurrentTaskEntry(user)
     # check whether there already is a task running
     if not isAnyTaskRunning(user):
+        # make sure tasks don't overlap
+        if datetime.now() - timedelta(0, 0, 0, 0, delay) > topTaskEntry.end:
+            start = datetime.now() - timedelta(0, 0, 0, 0, delay)
+        else:
+            start = topTaskEntry.end + timedelta(0, 1)
+        
         # no task running, so let's create a new entry
         newTaskEntry = Entry(owner = user, customer = customer, start = start, comment = comment)
         newTaskEntry.save()
@@ -36,6 +31,10 @@ def resume(user, customer, comment = "", delay = 0):
             # not for the same customer, so finish the current task and start a new one
             topTaskEntry.end = datetime.now()
             topTaskEntry.save()
+            if datetime.now() - timedelta(0, 0, 0, 0, delay) > topTaskEntry.end:
+                start = datetime.now() - timedelta(0, 0, 0, 0, delay)
+            else:
+                start = topTaskEntry.end + timedelta(0, 1)
             newTaskEntry = Entry(owner = user, customer = customer, start = start, comment = comment)
             newTaskEntry.save()
         else:
