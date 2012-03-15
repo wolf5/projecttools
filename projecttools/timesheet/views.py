@@ -45,7 +45,7 @@ def clock(request):
             
             # pause and immediately resume command
             elif request.POST["command"] == COMMAND_PAUSE_AND_RESUME:
-                helpers.pauseAndResume(request.user, int(request.POST["duration"]), comment)
+                helpers.iTookABreak(request.user, int(request.POST["duration"]), comment)
             
             # resume command
             elif request.POST["command"] == COMMAND_RESUME:

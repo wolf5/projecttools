@@ -12,20 +12,30 @@ def resume(user, customer, comment = "", delay = 0):
     """
     Start/Resume the current task. Delay specifies how far back (in minutes) the task is started.
     """
-    # first step: check whether there already is a task running
+
+    # retrieve current task    
+    topTaskEntry = getCurrentTaskEntry(user)
+    
+    # make sure tasks don't overlap
+    if datetime.now() - timedelta(0, 0, 0, 0, delay) > topTaskEntry.end:
+        # everything fine
+        start = datetime.now() - timedelta(0, 0, 0, 0, delay)
+    else:
+        # the new task would overlap with the old task, so start the new task one second after
+        # the end of the old task
+        start = topTaskEntry.end + timedelta(0, 1)
+        
+    # check whether there already is a task running
     if not isAnyTaskRunning(user):
         # no task running, so let's create a new entry
-        start = datetime.now() - timedelta(0, 0, 0, 0, delay)
         newTaskEntry = Entry(owner = user, customer = customer, start = start, comment = comment)
         newTaskEntry.save()
     else:
         # there is a task running, so check whether it is for the same customer
-        topTaskEntry = getCurrentTaskEntry(user)
         if topTaskEntry.customer != customer:
             # not for the same customer, so finish the current task and start a new one
             topTaskEntry.end = datetime.now()
             topTaskEntry.save()
-            start = datetime.now() - timedelta(0, 0, 0, 0, delay)
             newTaskEntry = Entry(owner = user, customer = customer, start = start, comment = comment)
             newTaskEntry.save()
         else:
@@ -44,18 +54,21 @@ def pause(user):
     else:
         pass
     
-def pauseAndResume(user, duration, comment):
+def iTookABreak(user, duration, comment):
     """
-    Insert a break with the given duration, i.e. pause the given duration before
+    Insert a break retroactively with the given duration, i.e. pause the given duration before
     and then immediately resume the task.
     """
     if isAnyTaskRunning(user):
         topTaskEntry = getCurrentTaskEntry(user)
-        topTaskEntry.end = datetime.now() - timedelta(0, 0, 0, 0, duration)
-        topTaskEntry.comment = comment
-        topTaskEntry.save()
-        newTaskEntry = Entry(owner = user, customer = getCurrentCustomer(user), start = datetime.now(), comment = comment)
-        newTaskEntry.save()
+        # make sure that we've already worked long enough on this task to take a break
+        durationAsTimedelta = timedelta(0, 0, 0, 0, duration)
+        if datetime.now() - topTaskEntry.start > durationAsTimedelta:
+            topTaskEntry.end = datetime.now() - durationAsTimedelta
+            topTaskEntry.comment = comment
+            topTaskEntry.save()
+            newTaskEntry = Entry(owner = user, customer = getCurrentCustomer(user), start = datetime.now(), comment = comment)
+            newTaskEntry.save()
     else:
         pass
 
