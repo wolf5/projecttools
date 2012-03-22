@@ -26,5 +26,6 @@ class Entry(models.Model):
             return timedelta(0)
 
     def clean(self):
-        if self.start >= self.end:
-            raise ValidationError("Startzeit muss vor Endzeit liegen.")
+        if self.start != None and self.end != None:
+            if self.start >= self.end:
+                raise ValidationError("Startzeit muss vor Endzeit liegen.")
