@@ -79,7 +79,11 @@
     </head>
     <body>
     	<div class="floatright">
-    		<a href="/logout/">Abmelden</a>
+    		{% if user.first_name or user.last_name %}
+    			<a href="/logout/">{{ user.first_name }} {{ user.last_name }} Abmelden</a>
+    		{% else %}
+    			<a href="/logout/">{{ user.username }} Abmelden</a>
+			{% endif %}
     	</div>
     	{% if currentCustomer %}
         	<a href="/customer/{{ currentCustomer.id }}/report/{{ serverTime|date:'Y' }}/{{ serverTime|date:'m' }}/">Report</a> | <a href="/admin/">Admin</a>
