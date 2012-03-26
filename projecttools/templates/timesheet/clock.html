@@ -33,13 +33,20 @@
                 {% endif %}
                 
                 {% if state == "running" %}
-	                // post the comment if we press enter
-	                $("input#comment").keypress(function(event) {
+	                // if the clock is running, change the comment if we press enter...
+					$("input#comment").keypress(function(event) {
 	                	if (event.which == 13) {
 	                		$("form#commentform").submit();
 	                	}
 	                });
+
+	                // ...or if we click outside the form.
+	                $("input#comment").blur(function() {
+                    	$("form#commentform").submit();
+                    });
+ 
 	            {% else %}
+	            	// if the clock is not running, start a new task if we change the comment and press enter...
 	            	$("input#comment").keypress(function(event) {
 	                	if (event.which == 13) {
 	                		$("input#comment").blur();
@@ -67,7 +74,7 @@
                 duration = duration - (minutes * 60 * 1000);
                 seconds = Math.floor(duration / 1000);
                 $("#clock").html(hours + "h " + minutes + "m " + seconds + "s");
-                document.title = hours + "h" + minutes + "m" + seconds + "s - {{ currentCustomer.name }}";
+                document.title = hours + "h" + minutes + "m" + seconds + "s {{ currentCustomer.name }}";
             }            
             
         </script>
