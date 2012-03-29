@@ -1,155 +1,214 @@
+{% extends "timesheet/base.html" %}
 {% load timesheettags %}
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}main.css" media="screen" />
-        <script type="text/javascript" src="{{ STATIC_URL }}jquery-1.7.1.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}ajaxcsrf.js"></script>
-        <script type="text/javascript">
-	        // This is an attempt to measure the time difference between the server
-	        // and the client in order to avoid negative time displays. Note that
-	        // this will never succeed entirely due to transmission time.
-	        var serverDate = new Date({{ serverTime|date:'Y, n-1, j, G, i, s, u/1000' }});
-	        var clientDate = new Date();
-	        var differencems = clientDate.getMilliseconds() - serverDate.getMilliseconds();
-		</script>
-        <script type="text/javascript">
-            
-            // When document is ready
-            $(document).ready(function() {
-                // display/start clock, depending on state
-                {% if topTaskEntry %}
-                	// The "-1" is necessary because the months (and only the months!) are zero based.
-	                var startDate = new Date({{ topTaskEntry.start|date:'Y, n-1, j, G, i, s, 0' }});
-	                {% if state == "paused" %}
-		                var endDate = new Date({{ topTaskEntry.end|date:'Y, n-1, j, G, i, s, 0' }});
-		                updateClock(startDate, endDate);
-	                {% else %}
-	                	startClock(startDate);
-	                {% endif %}
-                {% else %}
-					updateClock(new Date(), new Date());
-                {% endif %}
-                
-                {% if state == "running" %}
-	                // if the clock is running, change the comment if we press enter...
-					$("input#comment").keypress(function(event) {
-	                	if (event.which == 13) {
-	                		$("form#commentform").submit();
-	                	}
-	                });
+{% block title %}
+	{% if currentCustomer %}
+		Zeiterfassung: Uhr für {{ currentCustomer.name }}
+	{% else %}
+		Zeiterfassung
+	{% endif %}
+{% endblock title %}
 
-	                // ...or if we click outside the form.
-	                $("input#comment").blur(function() {
-                    	$("form#commentform").submit();
-                    });
- 
-	            {% else %}
-	            	// if the clock is not running, start a new task if we change the comment and press enter...
-	            	$("input#comment").keypress(function(event) {
-	                	if (event.which == 13) {
-	                		$("input#comment").blur();
-	                		$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));
-	                		$("#resumeform").submit();
-	                		return false;
-	                	}
-	                });
-                {% endif %}
-            });
-            
-            // Starts the clock
-            function startClock(startDate) {
-            	startDate.setMilliseconds(startDate.getMilliseconds() + differencems);
-                updateClock(startDate, new Date());
-                setInterval(function() {updateClock(startDate, new Date())}, 1000)
-            }
-            
-            // Updates the clock
-            function updateClock(startDate, endDate) {
-                var duration = endDate.getTime() - startDate.getTime();
-                hours = Math.floor(duration / (3600 * 1000));
-                duration = duration - (hours * 3600 * 1000);
-                minutes = Math.floor(duration / (60 * 1000));
-                duration = duration - (minutes * 60 * 1000);
-                seconds = Math.floor(duration / 1000);
-                $("#clock").html(hours + "h " + minutes + "m " + seconds + "s");
-                document.title = hours + "h" + minutes + "m" + seconds + "s {{ currentCustomer.name }}";
-            }            
-            
-        </script>
-        {% if currentCustomer %}
-        	<title>Zeiterfassung: Uhr für {{ currentCustomer.name }}</title>
-       	{% else %}
-       		<title>Zeiterfassung</title>
-        {% endif %}
-    </head>
-    <body>
-    	<div class="floatright">
-    		{% if user.first_name or user.last_name %}
-    			<a href="/logout/">{{ user.first_name }} {{ user.last_name }} Abmelden</a>
-    		{% else %}
-    			<a href="/logout/">{{ user.username }} Abmelden</a>
-			{% endif %}
-    	</div>
-    	{% if currentCustomer %}
-        	<a href="/customer/{{ currentCustomer.id }}/report/{{ serverTime|date:'Y' }}/{{ serverTime|date:'m' }}/">Report</a> | <a href="/admin/">Admin</a>
-        	<h1>Uhr für {{ currentCustomer.name }}: <span id="clock"></div></h1>
-        {% else %}
-        	<a href="/admin/">Admin</a>
-        	<h1>Uhr</h1>
-        {% endif %}
-        <div>
-        	<form action="" method="post" id="commentform">
-            	Kommentar: <input id="comment" type="text" size="40" name="comment" value="{{ topTaskEntry.comment }}" />
-            </form>
-        </div>
-        <h2>Steuerung</h2>
-        <ul>
-        	{% if currentCustomer %}
-	            {% if state == "paused" %}
-	                <li class="pauseresume"><form action="" method="post" id="resumeform" style="margin: 0px;"><a href="" id="resumelink">Start</a> (Oops. Ich habe vergessen, mich vor <a href="" id="resumelink5m">5m</a> <a href="" id="resumelink10m">10m</a> <a href="" id="resumelink15m">15m</a> <a href="" id="resumelink30m">30m</a> <a href="" id="resumelink1h">1h</a> <a href="" id="resumelink2h">2h</a> einzustempeln.)<input type="hidden" id="command" name="command" value="resume" /><input type="hidden" name="customer" value="{{ currentCustomer.id }}" /><input type="hidden" id="delay" name="delay" value="0"/></form></li>
-	                <script type="text/javascript">$(document).ready(function() {$("#resumelink").click(function() {$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
-	                <script type="text/javascript">$(document).ready(function() {$("#resumelink5m").click(function() {$("#resumeform input#delay").val(5);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
-	                <script type="text/javascript">$(document).ready(function() {$("#resumelink10m").click(function() {$("#resumeform input#delay").val(10);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
-	                <script type="text/javascript">$(document).ready(function() {$("#resumelink15m").click(function() {$("#resumeform input#delay").val(15);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
-	                <script type="text/javascript">$(document).ready(function() {$("#resumelink30m").click(function() {$("#resumeform input#delay").val(30);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
-	                <script type="text/javascript">$(document).ready(function() {$("#resumelink1h").click(function() {$("#resumeform input#delay").val(60);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
-	                <script type="text/javascript">$(document).ready(function() {$("#resumelink2h").click(function() {$("#resumeform input#delay").val(120);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
-	            {% else %}
-	                <li class="pauseresume"><form action="" method="post" id="pauseform" style="margin: 0px;"><a href="" id="pauselink">Pause</a> (Ich war gerade in einer <a href="" id="pauselink5m">5m</a> <a href="" id="pauselink10m">10m</a> <a href="" id="pauselink15m">15m</a> <a href="" id="pauselink30m">30m</a> <a href="" id="pauselink1h">1h</a> <a href="" id="pauselink2h">2h</a>-Pause)<input type="hidden" id="command" name="command" value="pause" /><input type="hidden" id="duration" name="duration" value="0"/></form></li>
-	                <script type="text/javascript">$(document).ready(function() {$("#pauselink").click(function() {$("#pauseform").submit();return false;})});</script>
-	                <script type="text/javascript">$(document).ready(function() {$("#pauselink5m").click(function() {$("#pauseform input#duration").val(5);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
-	                <script type="text/javascript">$(document).ready(function() {$("#pauselink10m").click(function() {$("#pauseform input#duration").val(10);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
-	                <script type="text/javascript">$(document).ready(function() {$("#pauselink15m").click(function() {$("#pauseform input#duration").val(15);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
-	                <script type="text/javascript">$(document).ready(function() {$("#pauselink30m").click(function() {$("#pauseform input#duration").val(30);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
-	                <script type="text/javascript">$(document).ready(function() {$("#pauselink1h").click(function() {$("#pauseform input#duration").val(60);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
-	                <script type="text/javascript">$(document).ready(function() {$("#pauselink2h").click(function() {$("#pauseform input#duration").val(120);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
-	            {% endif %}
+{% block js %}
+	// this holds the global timeout ID for the delay popup
+	var delaypopupTimeoutID = undefined;
+
+	// This is an attempt to measure the time difference between the server
+	// and the client in order to avoid negative time displays. Note that
+	// this will never succeed entirely due to transmission time.
+	var serverDate = new Date({{ serverTime|date:'Y, n-1, j, G, i, s, u/1000' }});
+	var clientDate = new Date();
+	var differencems = clientDate.getMilliseconds() - serverDate.getMilliseconds();
+	
+	// Starts the clock
+	function startClock(startDate) {
+		startDate.setMilliseconds(startDate.getMilliseconds() + differencems);
+	    updateClock(startDate, new Date());
+	    setInterval(function() {updateClock(startDate, new Date())}, 1000)
+	}
+	            
+	// Updates the clock
+	function updateClock(startDate, endDate) {
+	    var duration = endDate.getTime() - startDate.getTime();
+	    hours = Math.floor(duration / (3600 * 1000));
+	    duration = duration - (hours * 3600 * 1000);
+	    minutes = Math.floor(duration / (60 * 1000));
+	    duration = duration - (minutes * 60 * 1000);
+	    seconds = Math.floor(duration / 1000);
+	    $("#clock").html(hours + "h " + minutes + "m " + seconds + "s");
+	    document.title = hours + "h" + minutes + "m" + seconds + "s {{ currentCustomer.name }}";
+	}
+	
+	// do when document gets loaded
+	$(document).ready(function() {
+		
+		// Hide the delay popup and set up its fadeIn/fadeOut
+	    $("div#delaypopup").hide();
+	    $("div#controls").mouseenter(function() {
+	    	if (delaypopupTimeoutID !== undefined) {
+	    		window.clearTimeout(delaypopupTimeoutID);
+	    	}
+	    	delaypopupTimeoutID = undefined;
+	        $("div#delaypopup").fadeIn(100);
+	    });
+	    $("div#controls").mouseleave(function() {
+	    	delaypopupTimeoutID = window.setTimeout(function() {
+	    		$("div#delaypopup").fadeOut(500);
+	    	}, 1500);
+	    });
+	    
+	    // display/start clock, depending on state
+	    {% if topTaskEntry %}
+	    	// The "-1" is necessary because the months (and only the months!) are zero based.
+	        var startDate = new Date({{ topTaskEntry.start|date:'Y, n-1, j, G, i, s, 0' }});
+	        {% if state == "paused" %}
+	            var endDate = new Date({{ topTaskEntry.end|date:'Y, n-1, j, G, i, s, 0' }});
+	            updateClock(startDate, endDate);
+	        {% else %}
+	        	startClock(startDate);
 	        {% endif %}
-            
-            {% for customer in customers %}
-                {% if customer == currentCustomer %}
+	    {% else %}
+			updateClock(new Date(), new Date());
+	    {% endif %}
+	    
+	    {% if state == "running" %}
+		    // if the clock is running, change the comment if we press enter...
+			$("input#comment").keypress(function(event) {
+		    	if (event.which == 13) {
+		    		$("form#commentform").submit();
+		    	}
+		    });
+		
+		    // ...or if we click outside the form.
+		    $("input#comment").blur(function() {
+		    	$("form#commentform").submit();
+		    });
+	    {% else %}
+	    	// if the clock is not running, start a new task if we change the comment and press enter...
+	    	$("input#comment").keypress(function(event) {
+	        	if (event.which == 13) {
+	        		$("input#comment").blur();
+	        		$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));
+	        		$("#resumeform").submit();
+	        		return false;
+	        	}
+	        });
+	    {% endif %}
+	});
+{% endblock js %}
+
+{% block topmenuleft %}
+	<div class="topmenuitem current">
+	    <a href="/">Uhr</a>
+	</div>
+	{% if currentCustomer %}
+		<div class="topmenuitem">
+		    <a href="/customer/{{ currentCustomer.id }}/report/{{ serverTime|date:'Y' }}/{{ serverTime|date:'m' }}/">Report</a>
+		</div>
+	{% endif %}
+	<div class="topmenuitem lastmenuitem">
+	    <a href="/admin/">Admin</a>
+	</div>
+{% endblock topmenuleft %}
+
+{% block topmenuright %}
+<div class="topmenuitem lastmenuitem">
+    {% if user.first_name or user.last_name %}
+		<a href="/logout/">{{ user.first_name }} {{ user.last_name }} abmelden.</a>
+	{% else %}
+		<a href="/logout/">{{ user.username }} abmelden.</a>
+	{% endif %}
+</div>
+{% endblock topmenuright %}
+
+{% block content %}
+<div id="clock">0h 0m 0s</div>
+<div id="controls">
+	{% if state == "paused" %}
+		<div id="pauseresumebutton">
+	        <form action="" method="post" id="resumeform">
+	        	<a href="#" id="resumelink"><img src="{{ STATIC_URL }}play.png"></a>
+	        	<input type="hidden" id="command" name="command" value="resume" />
+	        	<input type="hidden" name="customer" value="{{ currentCustomer.id }}" />
+	        	<input type="hidden" id="delay" name="delay" value="0"/>
+	        </form>
+	    </div>
+	    <div id="delaypopup">
+	        Ich habe vergessen, mich vor <a href="#" id="resumelink5m">5m</a> <a href="#" id="resumelink10m">10m</a> <a href="#" id="resumelink15m">15m</a> <a href="#" id="resumelink30m">30m</a> <a href="#" id="resumelink1h">1h</a> <a href="#" id="resumelink1.5h">1.5h</a> <a href="#" id="resumelink2h">2h</a> einzustempeln.
+	    </div>
+	    <script type="text/javascript">$(document).ready(function() {$("#resumelink").click(function() {$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
+        <script type="text/javascript">$(document).ready(function() {$("#resumelink5m").click(function() {$("#resumeform input#delay").val(5);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
+        <script type="text/javascript">$(document).ready(function() {$("#resumelink10m").click(function() {$("#resumeform input#delay").val(10);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
+        <script type="text/javascript">$(document).ready(function() {$("#resumelink15m").click(function() {$("#resumeform input#delay").val(15);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
+        <script type="text/javascript">$(document).ready(function() {$("#resumelink30m").click(function() {$("#resumeform input#delay").val(30);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
+        <script type="text/javascript">$(document).ready(function() {$("#resumelink1h").click(function() {$("#resumeform input#delay").val(60);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
+        <script type="text/javascript">$(document).ready(function() {$("#resumelink1.5h").click(function() {$("#resumeform input#delay").val(90);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
+        <script type="text/javascript">$(document).ready(function() {$("#resumelink2h").click(function() {$("#resumeform input#delay").val(120);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
+	{% else %}
+		<div id="pauseresumebutton">
+			<form action="" method="post" id="pauseform" style="margin: 0px;">
+	        	<a href="#" id="pauseresumelink"><img src="{{ STATIC_URL }}pause.png"></a>
+	        	<input type="hidden" id="command" name="command" value="pause"/>
+	        	<input type="hidden" id="duration" name="duration" value="0"/>
+	        </form>
+	    </div>
+		<div id="delaypopup">
+	        Ich war gerade in einer <a href="#" id="pauseresumelink5m">5m</a> <a href="#" id="pauseresumelink10m">10m</a> <a href="#" id="pauseresumelink15m">15m</a> <a href="#" id="pauseresumelink30m">30m</a> <a href="#" id="pauseresumelink1h">1h</a> <a href="#" id="pauseresumelink1.5h">1.5h</a> <a href="#" id="pauseresumelink2h">2h</a>-Pause.<br/>
+	    </div>
+	    <script type="text/javascript">$(document).ready(function() {$("#pauseresumelink").click(function() {$("#pauseform").submit();return false;})});</script>
+        <script type="text/javascript">$(document).ready(function() {$("#pauseresumelink5m").click(function() {$("#pauseform input#duration").val(5);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
+        <script type="text/javascript">$(document).ready(function() {$("#pauseresumelink10m").click(function() {$("#pauseform input#duration").val(10);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
+        <script type="text/javascript">$(document).ready(function() {$("#pauseresumelink15m").click(function() {$("#pauseform input#duration").val(15);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
+        <script type="text/javascript">$(document).ready(function() {$("#pauseresumelink30m").click(function() {$("#pauseform input#duration").val(30);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
+        <script type="text/javascript">$(document).ready(function() {$("#pauseresumelink1h").click(function() {$("#pauseform input#duration").val(60);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
+        <script type="text/javascript">$(document).ready(function() {$("#pauseresumelink1.5h").click(function() {$("#pauseform input#duration").val(90);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
+        <script type="text/javascript">$(document).ready(function() {$("#pauseresumelink2h").click(function() {$("#pauseform input#duration").val(120);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
+	{% endif %}
+</div>
+{% if currentCustomer %}
+	<div class="customer">
+	    {{ currentCustomer.name }}
+	</div>
+{% endif %}
+{% if topTaskEntry %}
+	<div class="comment">
+		<form action="" method="post" id="commentform">
+	    	<input id="comment" type="text" name="comment" value="{{ topTaskEntry.comment }}"/>
+	   </form>
+	</div>
+{% endif %}
+<div class="leftlist">
+	<div class="section">Kunden</div>
+    <table>
+        <tbody>
+        	{% for customer in customers %}
+        		{% if customer == currentCustomer %}
                     {% if state == "running" %}
-                        <li><b>{{ customer.name }}</b></li>
+                    	<tr><td><a href="#" class="current">{{ customer.name }}</a></td></tr>
                     {% else %}
-                        <li><form action="" method="post" id="customerresumeform{{ customer.id }}" style="margin: 0px;"><a href="" id="customerresumelink{{ customer.id }}"><b>{{ customer.name }}</b></a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ customer.id }}" /></form></li>
+                        <tr><td><form action="" method="post" id="customerresumeform{{ customer.id }}"><a href="" id="customerresumelink{{ customer.id }}" class="current">{{ customer.name }}</a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ customer.id }}" /></form></td></tr>
                         <script type="text/javascript">$(document).ready(function() {$("#customerresumelink{{ customer.id }}").click(function() {$("#customerresumeform{{ customer.id }}").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#customerresumeform{{ customer.id }}").submit();return false;})});</script>
                     {% endif %}
                 {% else %}
-                    <li><form action="" method="post" id="customerresumeform{{ customer.id }}" style="margin: 0px;"><a href="" id="customerresumelink{{ customer.id }}">{{ customer.name }}</a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ customer.id }}" /></form></li>
+                    <tr><td><form action="" method="post" id="customerresumeform{{ customer.id }}"><a href="" id="customerresumelink{{ customer.id }}">{{ customer.name }}</a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ customer.id }}" /></form></td></tr>
                     <script type="text/javascript">$(document).ready(function() {$("#customerresumelink{{ customer.id }}").click(function() {$("#customerresumeform{{ customer.id }}").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#customerresumeform{{ customer.id }}").submit();return false;})});</script>
                 {% endif %}
-            {% endfor %}
-        </ul>
-        <h2>Protokoll</h2>
-        <table>
-            {% for entry in entries %}
-                <tr>
-                    <td><a href="/customer/{{ entry.customer.id }}/report/">{{ entry.customer.name }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.m.Y H.i" }} - {{ entry.end|date:"d.m.Y H.i" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%h:%m" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%oh" }})</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td>
-                </tr>
-            {% endfor %}
-        </table>
-        Feedback willkommen: <a href="mailto:twuersch@gmail.com">twuersch@gmail.com</a>
-    </body>
-</html>
+        	{% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="entries">
+    <table>
+        <tbody>
+        	{% for entry in entries %}
+        		{% if forloop.first %}
+        		<tr class="current">
+        		{% else %}
+        		<tr>
+        		{% endif %}
+        		<td><a href="/customer/{{ entry.customer.id }}/report/">{{ entry.customer.name }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.m.Y H.i" }} - {{ entry.end|date:"d.m.Y H.i" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%h:%m" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%oh" }})</a></td><td class="comment"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td>
+        		</tr>
+        	{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

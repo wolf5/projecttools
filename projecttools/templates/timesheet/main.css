@@ -1,0 +1,266 @@
+html {
+    font-size:100.01%;
+}
+
+body {
+    color:#000;
+    background:#fff;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-size: 85%;
+}
+
+body, ul, table, tr, td, tbody, img, h1, h2, div, form {
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+    vertical-align: baseline;
+    border-spacing: 0px;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:link, a:visited {
+    color: rgb(0, 0, 0);
+}
+
+a:hover, a:active {
+    background-color: black;
+    color: white;
+}
+
+div.pagemargins {
+    margin: 0px 30px 30px 30px;
+}
+
+div.topmenu {
+    margin: 0px;
+    padding: 4px 0px 0px 0px;
+}
+
+div.topmenuleft {
+    display: inline;
+}
+
+div.topmenuright {
+    float: right;
+    clear: both;
+    display: inline;
+}
+
+div.topmenuitem {
+    padding: 4px 20px 5px 20px;
+    display: inline;
+    border-left: 1px solid rgb(0, 0, 0);
+    border-bottom: 1px solid rgb(0, 0, 0);
+}
+
+div.topmenuitem a:link, div.topmenuitem a:visited {
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+}
+
+div.topmenuitem.lastmenuitem {
+    border-right: 1px solid rgb(0, 0, 0);
+}
+
+div.topmenuitem.current {
+    color: rgb(255, 255, 255);
+    background-color: rgb(0, 0, 0);
+}
+
+div.topmenuitem.current a:link, div.topmenuitem.current a:visited {
+    color: rgb(255, 255, 255);
+}
+
+div.topmenuitem a:hover, div.topmenuitem a:active {
+    color: rgb(158, 158, 158);
+    background-color: rgb(255, 255, 255);
+}
+
+div.topmenuitem.current a:hover, div.topmenuitem.current a:active {
+    color: rgb(158, 158, 158);
+    background-color: rgb(0, 0, 0);
+}
+
+div#clock {
+    font-size: 400%;
+    margin: 20px 0px 0px 0px;
+    font-family: Verdana;
+    display: inline-block;
+}
+
+div#controls {
+    display: inline-block;
+    vertical-align: baseline;
+    margin: 20px 0px 0px 0px;
+}
+
+div#pauseresumebutton {
+    display: inline-block;
+    vertical-align: bottom;
+}
+
+div#delaypopup {
+    display: inline-block;
+    margin: 0px 0px 0px 10px;
+}
+
+div.reportheading {
+    font-size: 250%;
+    margin: 20px 0px 0px 0px;
+    font-family: Verdana;
+}
+
+div.customer {
+    font-size: 250%;
+    margin: 0px 0px 0px 0px;
+    font-family: Verdana;
+}
+
+div.section {
+    font-size: 120%;
+    margin: 10px 0px 5px 0px;
+    font-family: Verdana;
+}
+
+div.section:first-child {
+	margin-top: 0px;
+}
+
+div.comment input {
+    font-size: 200%;
+    font-family: Verdana;
+    border-top: none;
+    border-left: none;
+    border-bottom: 1px dotted rgb(158, 158, 158);
+    border-right: none;
+    width: 499px;
+}
+
+div.leftlist {
+    margin: 20px 0px 0px 0px;
+    display: inline-block;
+}
+
+div.entries {
+    margin: 20px 0px 0px 20px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+div.leftlist a:link, div.leftlist a:visited {
+    color: rgb(158, 158, 158);
+    text-decoration: none;
+}
+
+div.leftlist a:active, div.leftlist a:hover {
+    color: rgb(255, 255, 255);
+    background-color: rgb(0, 0, 0);
+}
+
+div.leftlist td {
+    padding: 0 0 0.3em 0;
+    vertical-align: top;
+}
+
+div.leftlist tr {
+    margin: 0;
+    padding: 0;
+}
+
+div.leftlist a.current:link, div.leftlist a.current:visited {
+    color: rgb(0, 0, 0);
+}
+
+div.leftlist a.current:hover, div.leftlist a.current:active {
+    color: rgb(255, 255, 255);
+}
+
+div.entries tr {
+    color: rgb(158, 158, 158);
+    margin: 0;
+    padding: 0 0 3px 0;
+}
+
+div.entries tr.current {
+    color: rgb(0, 0, 0);
+}
+
+div.entries tr.total {
+	font-size: 120%;
+} 
+
+div.entries tr.current a:link, div.entries tr.current a:visited {
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+}
+
+div.entries tr.current a:hover, div.entries tr.current a:active {
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    background-color: rgb(0, 0, 0);
+}
+
+div.entries tr a:link, div.entries tr a:visited {
+    color: rgb(158, 158, 158);
+    text-decoration: none;
+}
+
+div.entries tr a:hover, div.entries tr a:active {
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    background-color: rgb(0, 0, 0);
+}
+
+div.entries td {
+    padding: 0 3px 0.3em 0;
+    vertical-align: top;
+}
+
+#pauseresumebutton {
+    padding: 0px 0px 0px 15px;
+}
+
+#pauseresumebutton a:hover, #pauseresumebutton a:active {
+    background-color: white;
+}
+
+td.hoursandminutes {
+    text-align: right;
+    padding: 0px 0px 0px 10px;
+}
+
+td.decimalhour {
+    text-align: right;
+    margin-left: 10px;
+}
+
+a.download:link, a.download:visited {
+    border: none;
+    margin:0;
+    padding: 1px 1px 1px 18px;
+    background-image: url('{{ STATIC_URL }}download_16.png');
+    background-repeat: no-repeat;
+    background-position: 1px 1px;
+}
+
+a.download:hover, a.download:active {
+    background: rgb(0, 0, 0);
+    color: white;
+    background-image: url('{{ STATIC_URL }}download_16_inverse.png');
+    background-repeat: no-repeat;
+    background-position: 1px 1px;
+}
+
+div#delaypopup {
+    font-size: 85%;
+    display: inline-block;
+    color: rgb(158, 158, 158);
+    vertical-align: bottom;
+}
+
+td.comment {
+	max-width: 450px;
+}

@@ -1,73 +1,119 @@
+{% extends "timesheet/base.html" %}
 {% load timesheettags %}
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}main.css" media="screen" />
-        <title>Zeiterfassung: Report für {{ currentCustomer.name }}</title>
-    </head>
-    <body>
-    	<div class="floatright">
-    		{% if user.first_name or user.last_name %}
-    			<a href="/logout/">{{ user.first_name }} {{ user.last_name }} Abmelden</a>
-    		{% else %}
-    			<a href="/logout/">{{ user.username }} Abmelden</a>
-			{% endif %}
-    	</div>
-        <a href="/">Uhr</a> | <a href="/admin/">Admin</a>
-        {% if year %}
-        	{% if month %}
-        		<h1>Report für {{ currentCustomer.name }} für {{ currentYearAndMonth|date:"F" }} {{ currentYearAndMonth|date:"Y" }}</h1>
-        	{% else %}
-        		<h1>Report für {{ currentCustomer.name }} für {{ currentYearAndMonth|date:"Y" }}</h1>
-        	{% endif %}        	
-        {% else %}
-        	<h1>Report für {{ currentCustomer.name }}</h1>
-        {% endif %}
-        <table>
-            {% for entry in entries %}
-                <tr>
-                    <td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.m.Y H.i" }} - {{ entry.end|date:"d.m.Y H.i" }}</a></td><td align="right"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%H:%m" }}</a></td><td align="right"><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%Oh" }})</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td>
+
+{% block title %}
+	Zeiterfassung: Report für {{ currentCustomer.name }}
+{% endblock title %}
+
+{% block topmenuleft %}
+	<div class="topmenuitem">
+	    <a href="/">Uhr</a>
+	</div>
+	{% if currentCustomer %}
+		<div class="topmenuitem current">
+		    <a href="/customer/{{ currentCustomer.id }}/report/{{ serverTime|date:'Y' }}/{{ serverTime|date:'m' }}/">Report</a>
+		</div>
+	{% endif %}
+	<div class="topmenuitem lastmenuitem">
+	    <a href="/admin/">Admin</a>
+	</div>
+{% endblock topmenuleft %}
+
+{% block topmenuright %}
+	<div class="topmenuitem lastmenuitem">
+		{% if user.first_name or user.last_name %}
+			<a href="/logout/">{{ user.first_name }} {{ user.last_name }} abmelden.</a>
+		{% else %}
+			<a href="/logout/">{{ user.username }} abmelden.</a>
+		{% endif %}
+	</div>
+{% endblock topmenuright %}
+
+{% block content %}
+<div class="reportheading">
+{% if year %}
+	{% if month %}
+		Report für {{ currentCustomer.name }} für {{ currentYearAndMonth|date:"F" }} {{ currentYearAndMonth|date:"Y" }}
+	{% else %}
+		Report für {{ currentCustomer.name }} für {{ currentYearAndMonth|date:"Y" }}
+	{% endif %}        	
+{% else %}
+	Report für {{ currentCustomer.name }}
+{% endif %}
+</div>
+
+<div class="leftlist">
+	<div class="section">Kunden</div>
+    <table>
+        <tbody>
+        	{% for customer in customers %}
+                {% if customer != currentCustomer %}
+                	<tr><td><a href="/customer/{{ customer.id }}/report">{{ customer.name }}</a></td></tr>
+                {% else %}
+                	<tr><td><a href="/customer/{{ customer.id }}/report" class="current">{{ customer.name }}</a></td></tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="section">Nach Monaten</div>
+    <table>
+        <tbody>
+            {% for availableYearAndMonth in availableYearsAndMonths %}
+    			<tr><td><a href="/customer/{{ currentCustomer.id }}/report/{{ availableYearAndMonth|date:'Y' }}/{{ availableYearAndMonth|date:'m' }}/">{{ availableYearAndMonth|date:"F Y" }}</a></td></tr>
+    		{% endfor %}
+        </tbody>
+    </table>
+    <div class="section">Nach Jahren</div>
+    <table>
+        <tbody>
+            {% for availableYear in availableYears %}
+    			<tr><td><a href="/customer/{{ currentCustomer.id }}/report/{{ availableYear|date:'Y' }}/">{{ availableYear|date:"Y" }}</a></td></tr>
+    		{% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="entries">
+    <table>
+        <tbody>
+        	{% for entry in entries %}
+                <tr class="current">
+                	<td class="comment">
+                		<a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a>
+                	</td>
+                	<td>
+                		<a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.m.Y H.i" }}</a>
+                	</td>
+                	<td>-</td>
+                	<td>
+                		<a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.end|date:"d.m.Y H.i" }}</a>
+                	</td>
+                	<td class="hoursandminutes">
+                		<a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%H:%m" }}</a>
+                	</td>
+                	<td class="decimalhour">
+                		<a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%Oh" }})</a>
+                	</td>
                 </tr>
             {% endfor %}
-            <tr>
-            	<td><b>Total</b></td>
-            	<td>{{ totalDuration|duration:"%H:%m" }}</td>
+            <!--
+            <tr class="current total">
+            	<td colspan="2">{{ totalDuration|duration:"%H:%m" }}</td>
             	<td>({{ totalDuration|duration:"%Oh" }})</td>
-            	<td>&nbsp;</td>
+            	<td>Total</td>
             </tr>
-        </table>
-        {% if year %}
-        	{% if month %}
-        		<a href="/customer/{{ currentCustomer.id }}/report.csv/{{ year }}/{{ month }}/">Als CSV herunterladen</a>
-        	{% else %}
-        		<a href="/customer/{{ currentCustomer.id }}/report.csv/{{ year }}/">Als CSV herunterladen</a>
-        	{% endif %}        	
-        {% else %}
-        	<a href="/customer/{{ currentCustomer.id }}/report.csv/">Als CSV herunterladen</a>
-        {% endif %}
-    	<h2>Nach Monaten</h2>
-    	<ul>
-    		{% for availableYearAndMonth in availableYearsAndMonths %}
-    			<li><a href="/customer/{{ currentCustomer.id }}/report/{{ availableYearAndMonth|date:'Y' }}/{{ availableYearAndMonth|date:'m' }}/">{{ availableYearAndMonth|date:"F Y" }}</a></li>
-    		{% endfor %}
-    	</ul>
-    	<h2>Nach Jahren</h2>
-    	<ul>
-    		{% for availableYear in availableYears %}
-    			<li><a href="/customer/{{ currentCustomer.id }}/report/{{ availableYear|date:'Y' }}/">{{ availableYear|date:"Y" }}</a></li>
-    		{% endfor %}
-    	</ul>
-        {% if customers.count > 1 %}
-	        <h2>Weitere Kunden</h2>
-	        <ul>
-	            {% for customer in customers %}
-	                {% if customer != currentCustomer %}
-	                <li><a href="/customer/{{ customer.id }}/report">{{ customer.name }}</a></li>
-	                {% endif %}
-	            {% endfor %}
-	        </ul>
-        {% endif %}
-        Feedback willkommen: <a href="mailto:twuersch@gmail.com">twuersch@gmail.com</a>
-    </body>
-</html>
+            -->
+        </tbody>
+    </table>
+    <br/>
+    {% if year %}
+    	{% if month %}
+    		<a href="/customer/{{ currentCustomer.id }}/report.csv/{{ year }}/{{ month }}/" class="download">Als CSV herunterladen</a>
+    	{% else %}
+    		<a href="/customer/{{ currentCustomer.id }}/report.csv/{{ year }}/" class="download">Als CSV herunterladen</a>
+    	{% endif %}        	
+    {% else %}
+    	<a href="/customer/{{ currentCustomer.id }}/report.csv/" class="download">Als CSV herunterladen</a>
+    {% endif %}
+</div>
+
+{% endblock content %}
