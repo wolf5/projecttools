@@ -60,14 +60,16 @@ def iTookABreak(user, duration, comment):
     """
     if isAnyTaskRunning(user):
         topTaskEntry = getCurrentTaskEntry(user)
-        # make sure that we've already worked long enough on this task to take a break
+        # make sure that we don't get any overlapping entries.
         durationAsTimedelta = timedelta(0, 0, 0, 0, duration)
         if datetime.now() - topTaskEntry.start > durationAsTimedelta:
             topTaskEntry.end = datetime.now() - durationAsTimedelta
             topTaskEntry.comment = comment
             topTaskEntry.save()
-            newTaskEntry = Entry(owner = user, customer = getCurrentCustomer(user), start = datetime.now(), comment = comment)
-            newTaskEntry.save()
+        else:
+            topTaskEntry.delete() 
+        newTaskEntry = Entry(owner = user, customer = getCurrentCustomer(user), start = datetime.now(), comment = comment)
+        newTaskEntry.save()
     else:
         pass
 
