@@ -9,9 +9,14 @@ except ImportError:
     sys.exit(1)
 
 import settings
- 
-import pydevd
-pydevd.patch_django_autoreload()
+
+# The module pydevd is only present in development environments, and only needed there.
+# In production environments, it is not needed, thus the failing import is ignored.
+try: 
+    import pydevd
+    pydevd.patch_django_autoreload()
+except ImportError:
+    pass
 
 if __name__ == "__main__":
     execute_manager(settings)
