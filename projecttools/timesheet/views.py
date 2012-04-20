@@ -132,4 +132,4 @@ def customer_report(request, customer_id, format_identifier, year, month):
         return render(request, "timesheet/customer_report.html", {"currentCustomer": currentCustomer, "entries": entries, "customers": customers, "totalDuration": totalDuration, "availableYearsAndMonths": availableYearsAndMonths, "year": year, "month": month, "currentYearAndMonth": currentYearAndMonth, "availableYears": availableYears, "user": request.user});
 
 def main_css(request):
-    return render(request, "timesheet/main.css", content_type = "text/css")
+    return render(request, "main.css", content_type = "text/css")
