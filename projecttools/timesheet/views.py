@@ -63,6 +63,8 @@ def clock(request):
     customers = Customer.objects.all().order_by("name")
     entries = Entry.objects.filter(owner = request.user).order_by("-start")
     currentCustomer = helpers.getCurrentCustomer(request.user)
+    if not currentCustomer:
+        currentCustomer = helpers.getDefaultCustomer()
     topTaskEntry = helpers.getCurrentTaskEntry(request.user)
     return render(request, "timesheet/clock.html", {"state": state, "customers": customers, "currentCustomer": currentCustomer, "entries": entries, "topTaskEntry": topTaskEntry, "serverTime": datetime.datetime.now(), "user": request.user})
 

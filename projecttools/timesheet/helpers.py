@@ -4,6 +4,7 @@ Created on Mar 2, 2012
 @author: timo
 '''
 from models import Entry
+from models import Customer
 from datetime import datetime
 from datetime import timedelta
 import urllib 
@@ -16,8 +17,9 @@ def resume(user, customer, comment = "", delay = 0):
     topTaskEntry = getCurrentTaskEntry(user)
     # check whether there already is a task running
     if not isAnyTaskRunning(user):
+        
         # make sure tasks don't overlap
-        if datetime.now() - timedelta(0, 0, 0, 0, delay) > topTaskEntry.end:
+        if not topTaskEntry or (datetime.now() - timedelta(0, 0, 0, 0, delay) > topTaskEntry.end):
             start = datetime.now() - timedelta(0, 0, 0, 0, delay)
         else:
             start = topTaskEntry.end + timedelta(0, 1)
@@ -88,6 +90,12 @@ def getCurrentCustomer(user):
         return topTaskEntry.customer
     else:
         return None
+    
+def getDefaultCustomer():
+    """
+    Get the "default" customer for the given user. At the moment, this is the first customer that can be found.
+    """
+    return next(iter(Customer.objects.order_by("name")), None)
 
 def getRunningTask(user):
     """

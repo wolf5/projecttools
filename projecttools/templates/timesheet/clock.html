@@ -164,18 +164,22 @@
         <script type="text/javascript">$(document).ready(function() {$("#pauseresumelink2h").click(function() {$("#pauseform input#duration").val(120);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
 	{% endif %}
 </div>
-{% if currentCustomer %}
-	<div class="customer">
-	    {{ currentCustomer.name }}
-	</div>
-{% endif %}
-{% if topTaskEntry %}
-	<div class="comment">
-		<form action="" method="post" id="commentform">
-	    	<input id="comment" type="text" name="comment" value="{{ topTaskEntry.comment }}"/>
-	   </form>
-	</div>
-{% endif %}
+<div class="customer">
+	{% if currentCustomer %}
+    	{{ currentCustomer.name }}
+    {% else %}
+    	&nbsp;
+    {% endif %}
+</div>
+<div class="comment">
+	<form action="" method="post" id="commentform">
+		{% if topTaskEntry %}
+			<input id="comment" type="text" name="comment" value="{{ topTaskEntry.comment }}"/>
+		{% else %}
+			<input id="comment" type="text" name="comment" value=""/>
+		{% endif %}
+   </form>
+</div>
 <div class="leftlist">
 	<div class="section">Kunden</div>
     <table>
