@@ -14,4 +14,7 @@ urlpatterns = patterns('',
     url(r"^customer/(?P<customer_id>\d+)/report(\.(?P<format_identifier>\w+))?/((?P<year>\d{4})(/(?P<month>\d{1,2}))?)?", "timesheet.views.customer_report"),
     url(r"^css/main.css", "timesheet.views.main_css"),
     url(r"^register/", "me.views.register"),
+    url(r"^me/activationSent/", "me.views.activationSent"),
+    url(r"^me/activate/(?P<activationKey>\w{64})", "me.views.activate"),
+    url(r"^me/activationFailed/", "me.views.activationFailed")
 )

@@ -1,8 +1,10 @@
-'''
+"""
+Contains logic and additional database abstraction.
+
 Created on Mar 2, 2012
 
 @author: timo
-'''
+"""
 from models import Entry
 from datetime import datetime
 from datetime import timedelta

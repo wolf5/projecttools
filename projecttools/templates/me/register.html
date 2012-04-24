@@ -7,22 +7,15 @@
 		<form method="post" action="">
 			{% csrf_token %}
 			<table>
-		        <tr>
-		            <td>Benutzername</td>
-		            <td>{{ form.username }}</td>
+				{% for field in registerForm %}
+				<tr>
+		            <td>{{ field.label_tag }}</td>
+		            <td>{{ field }}</td>
+		            <td>{{ field.errors }}</td>
 		        </tr>
+				{% endfor %}
 		        <tr>
-		            <td>Passwort</td>
-		            <td>{{ form.password }}</td>
-		        </tr>
-		        <tr>
-		        	<td colspan="2">
-		        		<input type="submit" value="login" />
-	        			<input type="hidden" name="next" value="{{ next }}" />
-		        	</td>
-		        </tr>
-		        <tr>
-		        	<td colspan="2"><a href="/register">Ich habe noch keinen Benutzernamen.</a></td>
+		        	<td colspan="2"><input type="submit"/></td>
 		        </tr>
 	        </table>
 		</form>

@@ -118,7 +118,8 @@ INSTALLED_APPS = (
     # 'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    'timesheet'
+    'timesheet',
+    'me'
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -147,4 +148,8 @@ LOGGING = {
 }
 
 LOGIN_URL = "/login/"
-LOGIN_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = "/timesheet/"
+ACCOUNT_ACTIVATION_TIME = 14    # Account activation delay in days
+EMAIL_HOST = "sylon.net"
+EMAIL_HOST_USER = "timo@dio.ch"
+EMAIL_HOST_PASSWORD = "!DATtw524005&"
