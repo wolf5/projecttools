@@ -3,3 +3,4 @@
 *.pyo
 database.sqlite
 projecttools/sitestatic
+.settings
