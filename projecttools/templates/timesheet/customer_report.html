@@ -43,6 +43,14 @@
 </div>
 
 <div class="leftlist">
+	{% if currentYearAndMonth %}
+	<div class="section">Reports</div>
+	<table>
+		<tbody>
+			<tr><td><a href="/reports/monthly.csv/{{ currentYearAndMonth|date:'Y' }}/{{ currentYearAndMonth|date:'m' }}">Monatsreport<br>alle Kunden<br>{{ currentYearAndMonth|date:"F" }} {{ currentYearAndMonth|date:"Y" }} (CSV)</a></td></tr>
+		</tbody>
+	</table>
+	{% endif %}
 	<div class="section">Kunden</div>
     <table>
         <tbody>
@@ -95,13 +103,6 @@
                 	</td>
                 </tr>
             {% endfor %}
-            <!--
-            <tr class="current total">
-            	<td colspan="2">{{ totalDuration|duration:"%H:%m" }}</td>
-            	<td>({{ totalDuration|duration:"%Oh" }})</td>
-            	<td>Total</td>
-            </tr>
-            -->
         </tbody>
     </table>
     <br/>

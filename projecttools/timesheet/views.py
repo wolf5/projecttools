@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -10,6 +12,7 @@ from datetime import timedelta
 import datetime
 from django.template.defaultfilters import date as djangoDate
 from projecttools.timesheet.constants import COMMAND_PAUSE_AND_RESUME
+from projecttools.timesheet.templatetags.timesheettags import duration
 
 def resumeFormFields():
     return '<input type="hidden" name="command" value="resume" /><input type="submit" value="Start" />'
@@ -105,7 +108,7 @@ def customer_report(request, customer_id, format_identifier, year, month):
     # ...and set up a few objects for display.
     if year:
         if month:
-            currentYearAndMonth = datetime.datetime(year, month, 1) 
+            currentYearAndMonth = datetime.datetime(year, month, 1)
         else:
             currentYearAndMonth = datetime.datetime(year, 1, 1)
     else:
@@ -132,6 +135,49 @@ def customer_report(request, customer_id, format_identifier, year, month):
         # Most recent at the top
         entries = entries.reverse()
         return render(request, "timesheet/customer_report.html", {"currentCustomer": currentCustomer, "entries": entries, "customers": customers, "totalDuration": totalDuration, "availableYearsAndMonths": availableYearsAndMonths, "year": year, "month": month, "currentYearAndMonth": currentYearAndMonth, "availableYears": availableYears, "user": request.user});
+
+def monthly_report_csv(request, year, month):
+    """
+    Outputs a monthly report as CSV.
+    """
+    # initialization
+    lines = []
+    currentYearAndMonth = datetime.datetime(int(year), int(month), 1)
+    lines.append(u"Monatsreport für alle Kunden für " + djangoDate(currentYearAndMonth, "F") + " " + djangoDate(currentYearAndMonth, "Y"))
+    
+    # retrieve all entries for the given month and year and pre-sort them.
+    entries = Entry.objects.filter(end__isnull = False, start__year = year, start__month = month).order_by("customer", "owner", "start")
+    
+    # keeps track of customer and owner while iterating. used to generate section titles.
+    previousCustomer = None
+    previousOwner = None
+    
+    # iterate over entries.
+    for entry in entries:
+        # customer header, if necessary
+        if entry.customer != previousCustomer:
+            lines.append(unicode(entry.customer))
+            previousCustomer = entry.customer
+        # owner header, if necessary
+        if entry.owner != previousOwner:
+            if entry.owner.first_name is not None or entry.owner.last_name is not None:
+                lines.append("Mitarbeiter: " + u" ".join([u"" if entry.owner.first_name is None else entry.owner.first_name, u"" if entry.owner.last_name is None else entry.owner.last_name]))
+            else:
+                lines.append("Mitarbeiter: " + unicode(entry.owner))
+            previousOwner = entry.owner
+        
+        lines.append(u",".join([djangoDate(entry.start, "d.m.Y"), 
+                                djangoDate(entry.start, "H:i"),
+                                djangoDate(entry.end, "d.m.Y"),
+                                djangoDate(entry.end, "H:i"),
+                                duration(entry.duration(), "%H:%m"),
+                                duration(entry.duration(), "%O"),
+                                entry.comment
+                                ]))
+    response = HttpResponse(u"\n".join(lines), content_type = "text/csv")
+    csvFilename = "Timesheet Report " + djangoDate(currentYearAndMonth, "F") + " " + djangoDate(currentYearAndMonth, "Y") + ".csv"
+    response["Content-Disposition"] = helpers.createContentDispositionAttachmentString(csvFilename, request)
+    return response
 
 def main_css(request):
     return render(request, "timesheet/main.css", content_type = "text/css")

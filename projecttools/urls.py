@@ -12,5 +12,6 @@ urlpatterns = patterns('',
     url(r"^login/", "django.contrib.auth.views.login", {"template_name": "timesheet/login.html"}),
     url(r"^logout/", "django.contrib.auth.views.logout_then_login", {"login_url": settings.LOGIN_URL}),
     url(r"^customer/(?P<customer_id>\d+)/report(\.(?P<format_identifier>\w+))?/((?P<year>\d{4})(/(?P<month>\d{1,2}))?)?", "timesheet.views.customer_report"),
-    url(r"css/main.css", "timesheet.views.main_css")
+    url(r"css/main.css", "timesheet.views.main_css"),
+    url(r"^reports/monthly.csv/(?P<year>\d{4})/(?P<month>\d{1,2})", "timesheet.views.monthly_report_csv")
 )
