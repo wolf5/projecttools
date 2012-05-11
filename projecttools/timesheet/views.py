@@ -158,6 +158,7 @@ def monthly_report_csv(request, year, month):
         if entry.customer != previousCustomer:
             lines.append(unicode(entry.customer))
             previousCustomer = entry.customer
+            previousOwner = None
         # owner header, if necessary
         if entry.owner != previousOwner:
             if entry.owner.first_name is not None or entry.owner.last_name is not None:
