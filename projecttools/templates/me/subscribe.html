@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% load customtags %}
+
+{% block title %}Abos{% endblock title %}
+
+{% block js %}
+$(document).ready(function() {
+	
+	function updatePrices() {
+		var integerPattern = new RegExp("\\d+");
+		if (integerPattern.test($("#id_numberYears").val())) {
+			var years = parseInt($("#id_numberYears").val());
+			if (years >= 0) {
+				var price = years * 54.45;
+				$("#totalIfYearly").text(price.toFixed(2));
+				if ($("#id_recurrence_0:checked").val() !== undefined) {
+					$("#total").text(price.toFixed(2));
+				}
+			}
+		}
+		if (integerPattern.test($("#id_numberMonths").val())) {
+			var months = parseInt($("#id_numberMonths").val());
+			if (months >= 0) {
+				var price = months * 4.95;
+				$("#totalIfMonthly").text(price.toFixed(2));
+				if ($("#id_recurrence_1:checked").val() !== undefined) {
+					$("#total").text(price.toFixed(2));
+				}
+			}
+		}
+	}
+	
+	updatePrices();
+	
+	// gui handler if the user chooses yearly payment
+	$("#id_recurrence_0").click(function() {
+		$("#duration_monthly").fadeOut(100, function() {
+			updatePrices();
+			$("#duration_yearly").fadeIn(100);
+		});
+	});
+	
+	// gui handler if the user chooses monthly payment
+	$("#id_recurrence_1").click(function() {
+		$("#duration_yearly").fadeOut(100, function() {
+			updatePrices();
+			$("#duration_monthly").fadeIn(100);
+		});
+	});
+	
+	// gui handler for displaying the yearly price when the value changes
+	$("#id_numberYears").keyup(function() {
+		updatePrices();
+	});
+	
+	// gui handler for displaying the monthly price when the value changes
+	$("#id_numberMonths").keyup(function() {
+		updatePrices();
+	});
+	
+	// gui handler to show bank transfer details
+	$("#id_payment_0").click(function() {
+		$("#invoicedetails").fadeOut(100, function() {
+			$("#transferdetails").fadeIn(100);
+		});
+	});
+	
+	// gui handler to show invoice details
+	$("#id_payment_1").click(function() {
+		$("#transferdetails").fadeOut(100, function() {
+			$("#invoicedetails").fadeIn(100);
+		});
+	});
+	
+	// show blocks depending on the selected period and payment modes
+	{% if subscriptionForm.recurrence.value == "monthly" %}
+		$("#duration_monthly").show();
+	{% else %}
+		$("#duration_yearly").show();
+	{% endif %}
+	
+	{% if subscriptionForm.payment.value == "transfer" %}
+		$("#transferdetails").show();
+	{% else %}
+		$("#invoicedetails").show();
+	{% endif %}
+});
+{% endblock js %}
+
+{% block topmenuleft %}
+	{% if not trialexpired and not subscriptionexpired %}
+		<div class="topmenuitem">
+		    <a href="{% url clock %}">Uhr</a>
+		</div>
+		{% if currentCustomer %}
+			<div class="topmenuitem">
+			    <a href="/customer/{{ currentCustomer.id }}/report/{{ serverTime|date:'Y' }}/{{ serverTime|date:'m' }}/">Report</a>
+			</div>
+		{% endif %}
+		<div class="topmenuitem lastmenuitem">
+		    <a href="/admin/">Admin</a>
+		</div>
+	{% endif %}
+{% endblock topmenuleft %}
+
+{% block topmenuright %}
+<div class="topmenuitem lastmenuitem">
+    {% if user.first_name or user.last_name %}
+		<a href="/logout/">{{ user.first_name }} {{ user.last_name }} abmelden</a>
+	{% else %}
+		<a href="/logout/">{{ user.username }} abmelden</a>
+	{% endif %}
+</div>
+{% endblock topmenuright %}
+
+{% block content %}
+<h1>Abos</h1>
+<div id="infotext">
+	{% if trial %}
+		<p>Ihr Test-Abo ist noch {{ expirydelta|duration:"%D" }} Tage lang aktiv, d.h. bis und mit {{ trialexpiry|date:"l, j. F Y H:i" }}.</p>
+		<p>Sie können hier jederzeit hier ein normales Abo kaufen, wenn Sie den Dienst über die Testperiode hinaus nutzen wollen.</p>
+	{% endif %}
+	{% if trialexpired %}
+		<p>Ihr Test-Abo ist am {{ trialexpiry|date:"l, j. F Y H:i" }} abgelaufen.</p>
+		<p>Sie können hier jederzeit hier ein normales Abo kaufen, wenn Sie den Dienst auch in Zukunft nutzen wollen.</p>
+	{% endif %}
+	{% if subscription %}
+		<p>Ihr Abo ist noch {{ expirydelta|duration:"%D" }} Tage lang aktiv, d.h. bis und mit {{ subscriptionexpiry|date:"l, j. F Y H:i" }}.</p>
+		<p>Sie können hier jederzeit Ihr Abo verlängern.</p>
+	{% endif %}
+	{% if subscriptionexpired %}
+		<p>Ihr Abo ist am {{ subscriptionexpiry|date:"l, j. F Y H:i" }} abgelaufen.</p>
+		<p>Sie können hier Ihr Abo erneuern.</p>
+	{% endif %}
+</div>
+<form action="" method="POST">
+	<h3>Die Preise</h3>
+	<div id="duration">
+		<p>
+			{{ subscriptionForm.recurrence }}
+		</p>
+		<p>
+			<div id="duration_monthly">{{ subscriptionForm.numberMonths }} Monate = CHF <span id="totalIfMonthly" class="total">0.00</span>{{ subscriptionForm.numberMonths.errors }}</div>
+			<div id="duration_yearly">{{ subscriptionForm.numberYears }} Jahre = CHF <span id="totalIfYearly" class="total">0.00</span>{{ subscriptionForm.numberYears.errors }}</div>
+		</p>
+	</div>
+	<h3>Zahlungsmöglichkeiten</h3>
+	<div id="payment">
+		{{ subscriptionForm.payment }}
+	</div>
+	<div id="transferdetails">
+		<p>
+			Bitte überweisen Sie den Betrag von CHF <span id="total">0.00</span> auf das Postkonto <b>40-676795-8</b>.
+			Ihr Abo wird aktualisiert, sobald die Zahlung bei uns eingetroffen ist.
+		</p>
+		<p class="withinput">Als Gedächtnisstütze diese Details an {{ subscriptionForm.email }} <input type="submit" name="transferdetails_submit" value="mailen" />.</p>{{ subscriptionForm.email.errors }} 
+	</div>
+	<div id="invoicedetails">
+		<dl>
+			<dt>Vorname</dt>
+			<dd>{{ subscriptionForm.first_name }}{{ subscriptionForm.first_name.errors }}</dd>
+			<dt>Nachname</dt>
+			<dd>{{ subscriptionForm.last_name }}{{ subscriptionForm.last_name.errors }}</dd>
+			<dt>Rechnungsadresse</dt>
+			<dd>{{ subscriptionForm.billingAddress }}{{ subscriptionForm.billingAddress.errors }}</dd>
+		</dl>
+		<p>
+			Einzahlungsschein an obenstehende Adresse <input type="submit" name="invoicedetails_submit" value="senden" />. 
+		</p>
+	</div>
+</form>
+{% endblock content %}

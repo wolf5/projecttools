@@ -9,12 +9,36 @@ body {
     font-size: 85%;
 }
 
-body, ul, table, tr, td, tbody, img, h1, h2, div, form {
+body, ul, table, tr, td, tbody, img, div, form {
     margin: 0px;
     padding: 0px;
     border: 0px;
     vertical-align: baseline;
     border-spacing: 0px;
+}
+
+h1 {
+	font-family: Verdana;
+	font-weight: normal;
+	font-size: 400%;
+}
+
+h2 {
+	font-family: Verdana;
+	font-weight: normal;
+	font-size: 250%;
+}
+
+h3 {
+	font-family: Verdana;
+	font-weight: normal;
+	font-size: 200%;
+}
+
+h4 {
+	font-family: Verdana;
+	font-weight: normal;
+	font-size: 120%;
 }
 
 a {
@@ -263,4 +287,65 @@ div#delaypopup {
 
 td.comment {
 	max-width: 450px;
+}
+
+div#duration li, div#payment li {
+	list-style: none;
+}
+
+div#duration div#duration_monthly, div#duration div#duration_yearly {
+	display: none;
+	margin-left: 20px;
+}
+
+div#infotext, div#duration, div#payment {
+	margin-left: 80px;
+}
+
+div#transferdetails, div#invoicedetails {
+	margin-left: 100px;
+	margin-top: 20px;
+	display: none;
+}
+
+span#totalIfMonthly, span#totalIfYearly, span#total {
+	font-weight: bold;
+}
+
+div#invoicedetails dt {
+	float: left;
+	clear: left;
+	width: 170px;
+}
+
+div#invoicedetails dd {
+	float: left;
+}
+
+div#invoicedetails dd textarea {
+	vertical-align: top;
+}
+
+div#invoicedetails p {
+	clear: left;
+}
+
+div#transferdetails p.withinput {
+	display: inline;
+}
+
+div#duration ul.errorlist, div#transferdetails ul.errorlist, div#invoicedetails ul.errorlist {
+	margin-left: 5px;
+	display: inline;
+	color: rgb(255, 100, 51);
+}
+
+div#duration ul.errorlist li, div#transferdetails ul.errorlist li, div#invoicedetails ul.errorlist li {
+	list-style: none;
+	display: inline;
+	margin-left: 10px;
+}
+
+div#duration ul.errorlist:before, div#transferdetails ul.errorlist:before, div#invoicedetails ul.errorlist:before {
+	content: "←"
 }

@@ -1,0 +1,7 @@
+Abo-Verlängerung um {{ period }}:
+Sie erhalten in den nächsten Tagen einen Einzahlungsschein über CHF {{ amount }} an folgende Adresse:
+
+{{ billingAddress }}
+
+Ihr Abo wird aktualisiert, sobald die Zahlung bei uns eingetroffen ist.
+Vielen Dank.

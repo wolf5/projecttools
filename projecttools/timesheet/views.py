@@ -1,15 +1,15 @@
-from django.shortcuts import render
+from constants import COMMAND_PAUSE, COMMAND_RESUME, STATE_PAUSED, STATE_RUNNING
+from datetime import timedelta
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-import helpers
-from constants import COMMAND_PAUSE, COMMAND_RESUME, STATE_PAUSED, STATE_RUNNING
-from models import Customer
-from models import Entry
+from django.shortcuts import render
 from django.template import Context, loader
-from datetime import timedelta
-import datetime
 from django.template.defaultfilters import date as djangoDate
+from models import Customer, Entry
+from projecttools.me.helpers import subscription_required
 from projecttools.timesheet.constants import COMMAND_PAUSE_AND_RESUME
+import datetime
+import helpers
 
 def resumeFormFields():
     return '<input type="hidden" name="command" value="resume" /><input type="submit" value="Start" />'
@@ -20,6 +20,7 @@ def pauseFormFields():
 # Clock view.
 # This view requires the user to be logged in.
 @login_required
+@subscription_required
 def clock(request):
 
     # POST request
@@ -64,7 +65,7 @@ def clock(request):
     entries = Entry.objects.filter(owner = request.user).order_by("-start")
     currentCustomer = helpers.getCurrentCustomer(request.user)
     topTaskEntry = helpers.getCurrentTaskEntry(request.user)
-    return render(request, "timesheet/clock.html", {"state": state, "customers": customers, "currentCustomer": currentCustomer, "entries": entries, "topTaskEntry": topTaskEntry, "serverTime": datetime.datetime.now(), "user": request.user})
+    return render(request, "timesheet/clock.html", {"state": state, "customers": customers, "currentCustomer": currentCustomer, "entries": entries, "topTaskEntry": topTaskEntry, "serverTime": datetime.datetime.now()})
 
 # Customer report view.
 # This view requires the user to be logged in.

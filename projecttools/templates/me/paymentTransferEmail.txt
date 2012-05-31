@@ -1,0 +1,11 @@
+Abo-Verlängerung um {{ period }}:
+Bitte überweisen Sie den Betrag von 
+
+    CHF {{ amount }} 
+    
+auf das Postkonto 
+
+    40-676795-8 
+
+Ihr Abo wird aktualisiert, sobald die Zahlung bei uns eingetroffen ist.
+Vielen Dank.

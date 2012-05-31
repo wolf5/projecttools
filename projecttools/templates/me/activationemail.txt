@@ -1,1 +1,1 @@
-{{ activationurl }}
+{{ activationUrl }}

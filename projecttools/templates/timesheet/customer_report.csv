@@ -1,2 +1,2 @@
-{% load timesheettags %}{% for entry in entries %}"{{ entry.start|date:"d.m.Y" }}","{{ entry.start|date:"H:i" }}","{{ entry.end|date:"d.m.Y" }}","{{ entry.end|date:"H:i" }}","{{ entry.duration|duration:"%H:%m" }}","{{ entry.duration|duration:"%O" }}","{{ entry.comment }}"
+{% load customtags %}{% for entry in entries %}"{{ entry.start|date:"d.m.Y" }}","{{ entry.start|date:"H:i" }}","{{ entry.end|date:"d.m.Y" }}","{{ entry.end|date:"H:i" }}","{{ entry.duration|duration:"%H:%m" }}","{{ entry.duration|duration:"%O" }}","{{ entry.comment }}"
 {% endfor %}

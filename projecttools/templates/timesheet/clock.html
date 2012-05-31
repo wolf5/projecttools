@@ -1,5 +1,5 @@
-{% extends "timesheet/base.html" %}
-{% load timesheettags %}
+{% extends "base.html" %}
+{% load customtags %}
 {% block title %}
 	{% if currentCustomer %}
 		Zeiterfassung: Uhr für {{ currentCustomer.name }}
@@ -98,7 +98,7 @@
 
 {% block topmenuleft %}
 	<div class="topmenuitem current">
-	    <a href="/">Uhr</a>
+	    <a href="{% url clock %}">Uhr</a>
 	</div>
 	{% if currentCustomer %}
 		<div class="topmenuitem">
@@ -113,9 +113,9 @@
 {% block topmenuright %}
 <div class="topmenuitem lastmenuitem">
     {% if user.first_name or user.last_name %}
-		<a href="/logout/">{{ user.first_name }} {{ user.last_name }} abmelden.</a>
+		<a href="/logout/">{{ user.first_name }} {{ user.last_name }} abmelden</a>
 	{% else %}
-		<a href="/logout/">{{ user.username }} abmelden.</a>
+		<a href="/logout/">{{ user.username }} abmelden</a>
 	{% endif %}
 </div>
 {% endblock topmenuright %}

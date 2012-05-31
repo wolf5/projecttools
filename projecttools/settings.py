@@ -147,9 +147,26 @@ LOGGING = {
     }
 }
 
+# Login URL
 LOGIN_URL = "/login/"
+
+# Redirect there after successful login
 LOGIN_REDIRECT_URL = "/timesheet/"
-ACCOUNT_ACTIVATION_TIME = 14    # Account activation delay in days
+
+# Number of days an activation code can be used
+ACCOUNT_ACTIVATION_TIME = 14
+
+# SMTP credentials
 EMAIL_HOST = "sylon.net"
 EMAIL_HOST_USER = "timo@dio.ch"
 EMAIL_HOST_PASSWORD = "!DATtw524005&"
+
+# Timesheet trial duration, in days
+TIMESHEET_TRIAL_DURATION = 40
+
+AUTH_PROFILE_MODULE = "me.AdditionalProfileInformation"
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.static",
+)
