@@ -12,7 +12,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '/Users/timo/Documents/Aptana Studio 3 Workspace/projecttools/projecttools/database.sqlite',                      # Or path to database file if using sqlite3.
+        'NAME': '/Users/timo/Documents/aptana-studio-3-workspace/projecttools/projecttools/database.sqlite',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -107,7 +107,7 @@ ROOT_URLCONF = 'projecttools.urls'
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
-    '/Users/timo/Documents/Aptana Studio 3 Workspace/projecttools/projecttools/templates'
+    '/Users/timo/Documents/aptana-studio-3-workspace/projecttools/projecttools/templates'
 )
 
 INSTALLED_APPS = (

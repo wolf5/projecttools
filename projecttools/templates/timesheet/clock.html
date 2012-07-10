@@ -201,6 +201,13 @@
     </table>
 </div>
 <div class="entries">
+    <p>
+        Präsenzzeit vom {{ presence_date|date:"d.m.Y" }}: {{ presence_start }} - {{ presence_end }} {{ presence_duration|duration:"%h:%m" }} ({{ presence_duration|duration:"%oh"}})<br/>
+        Pause / Nicht Arbeitszeit: {{ todays_offwork_duration|duration:"%h:%m" }} ({{ todays_offwork_duration|duration:"%oh" }})<br/>
+        Reine Arbeitszeit: {{ real_work_duration|duration:"%h:%m" }} ({{ real_work_duration|duration:"%oh" }})<br/>
+        Interne Arbeitszeit: {{ todays_intern_duration|duration:"%h:%m" }} ({{ todays_intern_duration|duration:"%oh" }})<br/>
+        Verrechenbare Arbeitszeit: {{ billable_time|duration:"%h:%m" }} ({{ billable_time|duration:"%oh" }})
+    </p>
     <table>
         <tbody>
         	{% for entry in entries %}
