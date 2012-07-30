@@ -13,6 +13,8 @@ import datetime
 from django.template.defaultfilters import date as djangoDate
 from projecttools.timesheet.constants import COMMAND_PAUSE_AND_RESUME
 from projecttools.timesheet.templatetags.timesheettags import duration
+from projecttools.timesheet.helpers import get_presence_start, get_presence_end,\
+    get_days_total
 
 def resumeFormFields():
     return '<input type="hidden" name="command" value="resume" /><input type="submit" value="Start" />'
@@ -71,29 +73,19 @@ def clock(request):
     topTaskEntry = helpers.getCurrentTaskEntry(request.user)
     
     # calculate presence time
-    presence_start = Entry.objects.filter(owner = request.user, start__year = topTaskEntry.start.year, start__month = topTaskEntry.start.month, start__day = topTaskEntry.start.day).order_by("start")[0].start
-    presence_date = presence_start.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
-    try:
-        presence_end = Entry.objects.filter(owner = request.user, end__year = presence_date.year, end__month = presence_date.month, end__day = presence_date.day).order_by("-end")[0].end
-    except Exception:
-        presence_end = datetime.datetime.now()
+    presence_start = get_presence_start(request.user)
+    presence_end = get_presence_end(request.user)
     presence_duration = presence_end - presence_start
+    presence_date = presence_start.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
+    
     
     # 0ffwork sum for present day
     offwork_customer = Customer.objects.get(name__exact = "0ffwork")
-    if offwork_customer is not None:
-        todays_offwork_entries = Entry.objects.filter(owner = request.user, customer = offwork_customer, start__year = presence_date.year, start__month = presence_date.month, start__day = presence_date.day, end__isnull = False)
-        todays_offwork_duration = timedelta()
-        for todays_offwork_entry in todays_offwork_entries:
-            todays_offwork_duration = todays_offwork_duration + (todays_offwork_entry.end - todays_offwork_entry.start)
+    todays_offwork_duration = get_days_total(request.user, offwork_customer, presence_date) if offwork_customer is not None else timedelta()
     
     # 1ntern sum for present day
     intern_customer = Customer.objects.get(name__exact = "1ntern")
-    if intern_customer is not None:
-        todays_intern_entries = Entry.objects.filter(owner = request.user, customer = intern_customer, start__year = presence_date.year, start__month = presence_date.month, start__day = presence_date.day, end__isnull = False)
-        todays_intern_duration = timedelta()
-        for todays_intern_entry in todays_intern_entries:
-            todays_intern_duration = todays_intern_duration + (todays_intern_entry.end - todays_intern_entry.start)
+    todays_intern_duration = get_days_total(request.user, intern_customer, presence_date) if intern_customer is not None else timedelta()
     
     # really worked
     real_work_duration = presence_duration - todays_offwork_duration
@@ -101,7 +93,21 @@ def clock(request):
     # billable time
     billable_time = real_work_duration - todays_intern_duration
     
-    return render(request, "timesheet/clock.html", {"state": state, "customers": customers, "currentCustomer": currentCustomer, "entries": entries, "topTaskEntry": topTaskEntry, "serverTime": datetime.datetime.now(), "user": request.user, "presence_date": presence_date, "presence_start": presence_start, "presence_end": presence_end, "presence_duration": presence_duration, "todays_offwork_duration": todays_offwork_duration, "real_work_duration": real_work_duration, "todays_intern_duration": todays_intern_duration, "billable_time": billable_time})
+    return render(request, "timesheet/clock.html", {"state": state, 
+                                                    "customers": customers, 
+                                                    "currentCustomer": currentCustomer, 
+                                                    "entries": entries, 
+                                                    "topTaskEntry": topTaskEntry, 
+                                                    "serverTime": datetime.datetime.now(), 
+                                                    "user": request.user, 
+                                                    "presence_date": presence_date, 
+                                                    "presence_start": presence_start, 
+                                                    "presence_end": presence_end, 
+                                                    "presence_duration": presence_duration, 
+                                                    "todays_offwork_duration": todays_offwork_duration, 
+                                                    "real_work_duration": real_work_duration, 
+                                                    "todays_intern_duration": todays_intern_duration, 
+                                                    "billable_time": billable_time})
 
 # Customer report view.
 # This view requires the user to be logged in.

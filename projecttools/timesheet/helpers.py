@@ -145,3 +145,31 @@ def createContentDispositionAttachmentString(filename, request):
     else:
         # Everyone else
         return "attachment; filename*=UTF-8''" + urllib.quote(filename.encode("utf-8"))
+
+def get_presence_start(user):
+    """
+    Determines the presence start time (Earliest start on the most recent day.)
+    """
+    topTaskEntry = getCurrentTaskEntry(user)
+    return Entry.objects.filter(owner = user, start__year = topTaskEntry.start.year, start__month = topTaskEntry.start.month, start__day = topTaskEntry.start.day).order_by("start")[0].start
+
+def get_presence_end(user):
+    """
+    Determines the presence end time (Latest end on the most recent day, or current time)
+    """
+    presence_start = get_presence_start(user)
+    presence_date = presence_start.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
+    try:
+        return Entry.objects.filter(owner = user, end__year = presence_date.year, end__month = presence_date.month, end__day = presence_date.day).order_by("-end")[0].end
+    except Exception:
+        return datetime.datetime.now()
+
+def get_days_total(user, customer, date):
+    """
+    Retrieves the total of hours logged for the given user on the given date.
+    """
+    days_completed_entries = Entry.objects.filter(owner = user, customer = customer, start__year = date.year, start__month = date.month, start__day = date.day, end__isnull = False)
+    days_total = timedelta()
+    for entry in days_completed_entries:
+        days_total = days_total + (entry.end - entry.start)
+    return days_total
