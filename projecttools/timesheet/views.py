@@ -2,14 +2,13 @@
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404, HttpResponseNotFound
 import helpers
 from constants import COMMAND_PAUSE, COMMAND_RESUME, STATE_PAUSED, STATE_RUNNING
 from models import Customer
 from models import Entry
 from django.template import Context, loader
-from datetime import timedelta
-import datetime
+from datetime import timedelta, datetime, date
 from django.template.defaultfilters import date as djangoDate
 from projecttools.timesheet.constants import COMMAND_PAUSE_AND_RESUME
 from projecttools.timesheet.templatetags.timesheettags import duration
@@ -75,17 +74,19 @@ def clock(request):
     # calculate presence time
     presence_start = get_presence_start(request.user)
     presence_end = get_presence_end(request.user)
-    presence_duration = presence_end - presence_start
-    presence_date = presence_start.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
-    
+    if presence_start and presence_end:
+        presence_duration = presence_end - presence_start
+    else:
+        presence_duration = timedelta()
+    presence_date = presence_start.replace(hour = 0, minute = 0, second = 0, microsecond = 0) if presence_start is not None else None
     
     # 0ffwork sum for present day
-    offwork_customer = Customer.objects.get(name__exact = "0ffwork")
-    todays_offwork_duration = get_days_total(request.user, offwork_customer, presence_date) if offwork_customer is not None else timedelta()
+    offwork_customer = Customer.objects.get(name = "0ffwork")
+    todays_offwork_duration = get_days_total(request.user, offwork_customer, presence_date) if offwork_customer is not None and presence_date is not None else timedelta()
     
     # 1ntern sum for present day
-    intern_customer = Customer.objects.get(name__exact = "1ntern")
-    todays_intern_duration = get_days_total(request.user, intern_customer, presence_date) if intern_customer is not None else timedelta()
+    intern_customer = Customer.objects.get(name = "1ntern")
+    todays_intern_duration = get_days_total(request.user, intern_customer, presence_date) if intern_customer is not None and presence_date is not None else timedelta()
     
     # really worked
     real_work_duration = presence_duration - todays_offwork_duration
@@ -98,7 +99,7 @@ def clock(request):
                                                     "currentCustomer": currentCustomer, 
                                                     "entries": entries, 
                                                     "topTaskEntry": topTaskEntry, 
-                                                    "serverTime": datetime.datetime.now(), 
+                                                    "serverTime": datetime.now(), 
                                                     "user": request.user, 
                                                     "presence_date": presence_date, 
                                                     "presence_start": presence_start, 
@@ -146,9 +147,9 @@ def customer_report(request, customer_id, format_identifier, year, month):
     # ...and set up a few objects for display.
     if year:
         if month:
-            currentYearAndMonth = datetime.datetime(year, month, 1)
+            currentYearAndMonth = datetime(year, month, 1)
         else:
-            currentYearAndMonth = datetime.datetime(year, 1, 1)
+            currentYearAndMonth = datetime(year, 1, 1)
     else:
         currentYearAndMonth = None
     
@@ -174,13 +175,14 @@ def customer_report(request, customer_id, format_identifier, year, month):
         entries = entries.reverse()
         return render(request, "timesheet/customer_report.html", {"currentCustomer": currentCustomer, "entries": entries, "customers": customers, "totalDuration": totalDuration, "availableYearsAndMonths": availableYearsAndMonths, "year": year, "month": month, "currentYearAndMonth": currentYearAndMonth, "availableYears": availableYears, "user": request.user});
 
+@login_required
 def monthly_report_csv(request, year, month):
     """
     Outputs a monthly report as CSV.
     """
     # initialization
     lines = []
-    currentYearAndMonth = datetime.datetime(int(year), int(month), 1)
+    currentYearAndMonth = datetime(int(year), int(month), 1)
     lines.append(u"Monatsreport für alle Kunden für " + djangoDate(currentYearAndMonth, "F") + " " + djangoDate(currentYearAndMonth, "Y"))
     
     # retrieve all entries for the given month and year and pre-sort them.
@@ -220,3 +222,44 @@ def monthly_report_csv(request, year, month):
 
 def main_css(request):
     return render(request, "timesheet/main.css", content_type = "text/css")
+
+@login_required
+def monthly_time_statistics_csv(request, year, month):
+    year = int(year) if year else None
+    month = int(month) if month else None
+    if year and month:
+        rows = []
+        rows.append(["#Datum", "Präsenzzeit Start", "Präsenzzeit Ende", "Total Pause"])
+        current_date = date(year, month, 1)
+        one_day = timedelta(days = 1)
+        while current_date.month == month:
+            
+            presence_start = get_presence_start(request.user, current_date)
+            presence_end = get_presence_end(request.user, current_date)
+            offwork_customer = Customer.objects.get(name = "0ffwork")
+            presence_date = presence_start.replace(hour = 0, minute = 0, second = 0, microsecond = 0) if presence_start is not None else None
+            todays_offwork_duration = get_days_total(request.user, offwork_customer, presence_date) if offwork_customer is not None and presence_date is not None else timedelta()
+            
+            current_date_as_string = djangoDate(current_date, "d.m.Y")
+            presence_start_as_string = djangoDate(presence_start, "H:i") if presence_start else "00:00"
+            presence_end_as_string = djangoDate(presence_end, "H:i") if presence_end else "00:00"
+            todays_offwork_duration_as_string = duration(todays_offwork_duration, "%H:%m")
+            rows.append([current_date_as_string, presence_start_as_string, presence_end_as_string, todays_offwork_duration_as_string])
+            
+            # if we're looking at a sunday, insert two empty lines afterwards.
+            if current_date.isoweekday() == 7:
+                rows.append([])
+                rows.append([])
+            
+            # go to the next day.
+            current_date = current_date + one_day
+        
+        # Return CSV to the browser
+        lines = [u",".join(row) for row in rows]
+        response = HttpResponse(u"\n".join(lines), content_type = "text/csv")
+        currentYearAndMonth = datetime(int(year), int(month), 1)
+        csv_filename = "Arbeitszeitstatistik " + djangoDate(currentYearAndMonth, "F") + " " + djangoDate(currentYearAndMonth, "Y") + ".csv"
+        response["Content-Disposition"] = helpers.createContentDispositionAttachmentString(csv_filename, request)
+        return response
+    else:
+        return HttpResponseNotFound("Page not found.")

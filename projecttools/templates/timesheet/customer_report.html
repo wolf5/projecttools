@@ -48,6 +48,7 @@
 	<table>
 		<tbody>
 			<tr><td><a href="/reports/monthly.csv/{{ currentYearAndMonth|date:'Y' }}/{{ currentYearAndMonth|date:'m' }}">Monatsreport<br>alle Kunden<br>{{ currentYearAndMonth|date:"F" }} {{ currentYearAndMonth|date:"Y" }} (CSV)</a></td></tr>
+			<tr><td><a href="/reports/timestatistics.csv/{{ currentYearAndMonth|date:'Y' }}/{{ currentYearAndMonth|date:'m' }}">Arbeitszeitstatistik<br/>{{ currentYearAndMonth|date:"F" }} {{ currentYearAndMonth|date:"Y" }} (CSV)</a></td></tr>
 		</tbody>
 	</table>
 	{% endif %}

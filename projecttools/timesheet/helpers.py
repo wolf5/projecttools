@@ -146,23 +146,34 @@ def createContentDispositionAttachmentString(filename, request):
         # Everyone else
         return "attachment; filename*=UTF-8''" + urllib.quote(filename.encode("utf-8"))
 
-def get_presence_start(user):
+def get_presence_start(user, date = None):
     """
-    Determines the presence start time (Earliest start on the most recent day.)
+    Determines the presence start time (Earliest start on the most recent day or the given date)
     """
-    topTaskEntry = getCurrentTaskEntry(user)
-    return Entry.objects.filter(owner = user, start__year = topTaskEntry.start.year, start__month = topTaskEntry.start.month, start__day = topTaskEntry.start.day).order_by("start")[0].start
-
-def get_presence_end(user):
-    """
-    Determines the presence end time (Latest end on the most recent day, or current time)
-    """
-    presence_start = get_presence_start(user)
-    presence_date = presence_start.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
+    if date:
+        year, month, day = date.year, date.month, date.day
+    else:
+        top_task_entry = getCurrentTaskEntry(user)
+        year, month, day = top_task_entry.start.year, top_task_entry.start.month, top_task_entry.start.day
     try:
-        return Entry.objects.filter(owner = user, end__year = presence_date.year, end__month = presence_date.month, end__day = presence_date.day).order_by("-end")[0].end
-    except Exception:
-        return datetime.datetime.now()
+        return Entry.objects.filter(owner = user, start__year = year, start__month = month, start__day = day).order_by("start")[0].start
+    except IndexError, Entry.DoesNotExist:
+        return None
+
+def get_presence_end(user, date = None):
+    """
+    Determines the presence end time (Latest end on the most recent day or current time if no date is given, else last end on the given date)
+    """
+    if date:
+        year, month, day = date.year, date.month, date.day
+    else:
+        presence_start = get_presence_start(user)
+        presence_date = presence_start.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
+        year, month, day = presence_date.year, presence_date.month, presence_date.day
+    try:
+        return Entry.objects.filter(owner = user, end__year = year, end__month = month, end__day = day).order_by("-end")[0].end
+    except IndexError, Entry.DoesNotExist:
+        return None
 
 def get_days_total(user, customer, date):
     """
