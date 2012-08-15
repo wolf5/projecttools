@@ -3,13 +3,13 @@ from models import Entry
 from django.contrib import admin
 from projecttools.me.helpers import isSubscriptionValid
 
-class OwnEntryAdmin(admin.ModelAdmin):
+class EntryAdmin(admin.ModelAdmin):
     """
     Shows only the timesheet entries that belong to the current user.
     Restricts access if the subscription is no longer valid.
     """
     def queryset(self, request):
-        originalQuerySet = super(OwnEntryAdmin, self).queryset(request)
+        originalQuerySet = super(EntryAdmin, self).queryset(request)
         
         if request.user.is_superuser:
             return originalQuerySet
@@ -18,13 +18,22 @@ class OwnEntryAdmin(admin.ModelAdmin):
             return filteredQuerySet
     
     def has_add_permission(self, request):
-        return isSubscriptionValid(request.user) and super(OwnEntryAdmin, self).has_add_permission(request)
+        return isSubscriptionValid(request.user) and super(EntryAdmin, self).has_add_permission(request)
     
     def has_change_permission(self, request, obj = None):
-        return isSubscriptionValid(request.user) and super(OwnEntryAdmin, self).has_change_permission(request, obj)
+        return isSubscriptionValid(request.user) and super(EntryAdmin, self).has_change_permission(request, obj)
     
     def has_delete_permission(self, request, obj = None):
-        return isSubscriptionValid(request.user) and super(OwnEntryAdmin, self).has_delete_permission(request, obj)
+        return isSubscriptionValid(request.user) and super(EntryAdmin, self).has_delete_permission(request, obj)
+admin.site.register(Entry, EntryAdmin)
 
-admin.site.register(Customer)
-admin.site.register(Entry, OwnEntryAdmin)
+class CustomerAdmin(admin.ModelAdmin):
+    def has_add_permissions(self, request):
+        return True
+    
+    def has_change_permissions(self, request, obj = None):
+        return True
+    
+    def has_delete_permissions(self, request, obj = None):
+        return True
+admin.site.register(Customer, CustomerAdmin)

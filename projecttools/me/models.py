@@ -12,7 +12,7 @@ class PendingActivation(models.Model):
     activationKey = models.CharField(max_length = 64)
 
 class Subscription(models.Model):
-    user = OneToOneField(User, unique = True)
+    user = OneToOneField(User)
     expiry = models.DateTimeField()
     trial = models.BooleanField(default = False)
 
@@ -23,9 +23,7 @@ class AdditionalProfileInformation(models.Model):
 def createAdditionalProfileInformation(sender, instance, created, **kwargs):
     if created:
         AdditionalProfileInformation.objects.create(user = instance)
-post_save.connect(createAdditionalProfileInformation, sender = User)
+# Note that the dispatch_uid seems to be necessary to prevent the 
+# receiver from being called twice and generating an IntegrityError.
+# post_save.connect(createAdditionalProfileInformation, sender = User, dispatch_uid = "createAdditionalProfileInformation")
 
-def createTimesheetTrialSubscription(sender, instance, created, **kwargs):
-    if created:
-        Subscription.objects.create(user = instance, expiry = datetime.now() + timedelta(settings.TIMESHEET_TRIAL_DURATION), trial = True)
-post_save.connect(createTimesheetTrialSubscription, sender = User)

@@ -1,0 +1,37 @@
+[
+    {
+        "pk": 1, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "timo", 
+            "first_name": "", 
+            "last_name": "", 
+            "is_active": true, 
+            "is_superuser": true, 
+            "is_staff": true, 
+            "last_login": "2012-06-01 17:49:31", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "sha1$8a1bf$fafc9d1276b293c0a3c163333903673a51de5e62", 
+            "email": "twuersch@gmail.com", 
+            "date_joined": "2012-06-01 17:49:07"
+        }
+    },
+    {
+        "pk": 1, 
+        "model": "me.subscription", 
+        "fields": {
+            "trial": false, 
+            "user": 1, 
+            "expiry": "2050-06-01 17:49:45"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "me.additionalprofileinformation", 
+        "fields": {
+            "user": 1, 
+            "billingAddress": ""
+        }
+    }
+]

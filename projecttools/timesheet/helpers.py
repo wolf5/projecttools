@@ -5,7 +5,7 @@ Created on Mar 2, 2012
 
 @author: timo
 """
-from models import Entry
+from models import Customer, Entry
 from datetime import datetime
 from datetime import timedelta
 import urllib 
@@ -15,19 +15,24 @@ def resume(user, customer, comment = "", delay = 0):
     Start/Resume the current task. Delay specifies how far back (in minutes) the task is started.
     """
         
-    topTaskEntry = getCurrentTaskEntry(user)
     # check whether there already is a task running
     if not isAnyTaskRunning(user):
-        # make sure tasks don't overlap
-        if datetime.now() - timedelta(0, 0, 0, 0, delay) > topTaskEntry.end:
-            start = datetime.now() - timedelta(0, 0, 0, 0, delay)
+        topTaskEntry = getCurrentTaskEntry(user)
+        if topTaskEntry is not None:
+            # if there's a previous task, make sure that they don't overlap
+            if datetime.now() - timedelta(0, 0, 0, 0, delay) > topTaskEntry.end:
+                start = datetime.now() - timedelta(0, 0, 0, 0, delay)
+            else:
+                start = topTaskEntry.end + timedelta(0, 1)
         else:
-            start = topTaskEntry.end + timedelta(0, 1)
+            # no previous task, so there can't be any overlapping
+            start = datetime.now()
         
-        # no task running, so let's create a new entry
+        # no task running, so let's just create a new entry
         newTaskEntry = Entry(owner = user, customer = customer, start = start, comment = comment)
         newTaskEntry.save()
     else:
+        topTaskEntry = getCurrentTaskEntry(user)
         # there is a task running, so check whether it is for the same customer
         if topTaskEntry.customer != customer:
             # not for the same customer, so finish the current task and start a new one
@@ -83,13 +88,18 @@ def isAnyTaskRunning(user):
 
 def getCurrentCustomer(user):
     """
-    Get the currently selected customer for the given user.
+    Get the currently selected customer for the given user, which always is either the
+    last customer the user's been working on, or the first customer in the customer
+    list if there aren't any task entries yet, or None if there aren't any customers yet.
     """
     topTaskEntry = getCurrentTaskEntry(user)
     if topTaskEntry != None:
         return topTaskEntry.customer
     else:
-        return None
+        try:
+            return Customer.objects.order_by("name")[0]
+        except IndexError:
+            return None
 
 def getRunningTask(user):
     """

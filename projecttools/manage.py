@@ -15,8 +15,9 @@ import settings
 try: 
     import pydevd
     pydevd.patch_django_autoreload()
-except ImportError:
-    pass
+except ImportError as importError:
+    import sys
+    sys.stderr.write("Could not start pydevd: " + str(importError))
 
 if __name__ == "__main__":
     execute_manager(settings)

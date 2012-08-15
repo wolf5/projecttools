@@ -7,6 +7,7 @@ Created on Apr 26, 2012
 @author: timo
 """
 from django import forms
+from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -58,3 +59,13 @@ class SubscriptionForm(forms.Form):
         if cleaned_data["payment"] == u"invoice":
             if "email" in self._errors: del self._errors["email"]
         return cleaned_data
+    
+class AuthenticationForm(forms.Form):
+    username = forms.CharField(label = "Benutzername", max_length = 30)
+    password = forms.CharField(label = "Passwort", widget = forms.PasswordInput)
+    
+    def clean(self):
+        user = authenticate(username = self.cleaned_data.get("username"), password = self.cleaned_data.get("password"))
+        if user is None or (user is not None and not user.is_active):
+            raise forms.ValidationError("Unbekannter")
+        # TODO: twuersch: continue here.

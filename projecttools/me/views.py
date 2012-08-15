@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login as django_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Permission, User
 from django.core.mail import send_mail, mail_admins
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
@@ -16,6 +16,8 @@ from helpers import sendActivationEmail, isSubscriptionValid
 from models import PendingActivation, Subscription
 from smtplib import SMTPException
 from urllib import urlencode
+from django.contrib.contenttypes.models import ContentType
+from projecttools.timesheet.models import Customer, Entry
 
 def register(request):
     """
@@ -82,6 +84,16 @@ def activate(request, activationKey):
             # everything in order, so activate the user.
             user = pendingActivation.user
             user.is_active = True
+            
+            # Assign Customer and Entry permissions for this user.
+            admin_actions = ["add", "change", "delete"]            
+            content_types = [ContentType.objects.get_for_model(Customer), ContentType.objects.get_for_model(Entry)]
+            for content_type in content_types:
+                for action in admin_actions:
+                    permission = Permission.objects.get(content_type = content_type, codename = action + "_" + content_type.model.lower())
+                    user.user_permissions.add(permission)
+                    
+            # We're done preparing the user, so save.
             user.save()
             
             # start a timesheet trial period of 40 days.
@@ -123,11 +135,12 @@ def login(request):
                     return HttpResponseRedirect("/me/subscribe/")
             else:
                 authenticationForm = AuthenticationForm()
-                authenticationForm.fields.username.error_messages = {"invalid": "Dieser Benutzer muss zuerst aktiviert werden."}
+                authenticationForm.fields["username"].error_messages = {"invalid": "Dieser Benutzer muss zuerst aktiviert werden."}
                 return render(request, "me/login.html", {"authenticationForm": authenticationForm})
         else:
             authenticationForm = AuthenticationForm()
-            authenticationForm.fields.username.error_messages = {"invalid": "Benutzername und/oder Passwort falsch."}
+            # TODO: twuersch: write own AuthenticationForm, because this don't seem to work with the built-in one.
+            authenticationForm.fields["username"].error_messages = {"invalid": "Benutzername und/oder Passwort falsch."}
             return render(request, "me/login.html", {"authenticationForm": authenticationForm})
     elif request.method == "GET":
         authenticationForm = AuthenticationForm()

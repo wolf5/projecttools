@@ -65,7 +65,8 @@ def clock(request):
     entries = Entry.objects.filter(owner = request.user).order_by("-start")
     currentCustomer = helpers.getCurrentCustomer(request.user)
     topTaskEntry = helpers.getCurrentTaskEntry(request.user)
-    return render(request, "timesheet/clock.html", {"state": state, "customers": customers, "currentCustomer": currentCustomer, "entries": entries, "topTaskEntry": topTaskEntry, "serverTime": datetime.datetime.now()})
+    justResumed = request.method == "POST" and "command" in request.POST and (request.POST["command"] == COMMAND_RESUME or request.POST["command"] == COMMAND_PAUSE_AND_RESUME)
+    return render(request, "timesheet/clock.html", {"state": state, "customers": customers, "currentCustomer": currentCustomer, "entries": entries, "topTaskEntry": topTaskEntry, "serverTime": datetime.datetime.now(), "justResumed": justResumed})
 
 # Customer report view.
 # This view requires the user to be logged in.
