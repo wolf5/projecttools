@@ -29,7 +29,7 @@ def duration(value, arg = "%h:%m"):
     if not isinstance(value, timedelta):
         return ""
     
-    totalSeconds = value.total_seconds()
+    totalSeconds = (value.microseconds + (value.seconds + value.days * 24 * 3600) * 10**6) / float(10**6)
     totalDays, remainder = divmod(totalSeconds, 86400)
     modHours, remainder = divmod(remainder, 3600)
     modMinutes, modSeconds = divmod(remainder, 60)

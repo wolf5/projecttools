@@ -1,8 +1,10 @@
 # Taken from http://blog.dscpl.com.au/2010/03/improved-wsgi-script-for-use-with.html
 
 import sys
-
 sys.path.insert(0, "/var/www/projecttools-wiedehopf/projecttools")
+
+import site
+site.addsitedir("/usr/local/pythonenv/projecttools-wiedehopf/lib/python2.6/site-packages")
 
 import settings_wiedehopf
 
