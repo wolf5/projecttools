@@ -126,6 +126,7 @@
 	{% if state == "paused" %}
 		<div id="pauseresumebutton">
 	        <form action="" method="post" id="resumeform">
+			{% csrf_token %}
 	        	<a href="#" id="resumelink"><img src="{{ STATIC_URL }}play.png"></a>
 	        	<input type="hidden" id="command" name="command" value="resume" />
 	        	<input type="hidden" name="customer" value="{{ currentCustomer.id }}" />
@@ -146,6 +147,7 @@
 	{% else %}
 		<div id="pauseresumebutton">
 			<form action="" method="post" id="pauseform" style="margin: 0px;">
+			{% csrf_token %}
 	        	<a href="#" id="pauseresumelink"><img src="{{ STATIC_URL }}pause.png"></a>
 	        	<input type="hidden" id="command" name="command" value="pause"/>
 	        	<input type="hidden" id="duration" name="duration" value="0"/>
