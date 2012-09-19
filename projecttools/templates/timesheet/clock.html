@@ -175,6 +175,7 @@
 </div>
 <div class="comment">
 	<form action="" method="post" id="commentform">
+	    {% csrf_token %}
 		{% if topTaskEntry %}
 			<input id="comment" type="text" name="comment" value="{{ topTaskEntry.comment }}"/>
 		{% else %}
@@ -191,11 +192,11 @@
                     {% if state == "running" %}
                     	<tr><td><a href="#" class="current">{{ customer.name }}</a></td></tr>
                     {% else %}
-                        <tr><td><form action="" method="post" id="customerresumeform{{ customer.id }}"><a href="" id="customerresumelink{{ customer.id }}" class="current">{{ customer.name }}</a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ customer.id }}" /></form></td></tr>
+                        <tr><td><form action="" method="post" id="customerresumeform{{ customer.id }}">{% csrf_token %}<a href="" id="customerresumelink{{ customer.id }}" class="current">{{ customer.name }}</a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ customer.id }}" /></form></td></tr>
                         <script type="text/javascript">$(document).ready(function() {$("#customerresumelink{{ customer.id }}").click(function() {$("#customerresumeform{{ customer.id }}").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#customerresumeform{{ customer.id }}").submit();return false;})});</script>
                     {% endif %}
                 {% else %}
-                    <tr><td><form action="" method="post" id="customerresumeform{{ customer.id }}"><a href="" id="customerresumelink{{ customer.id }}">{{ customer.name }}</a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ customer.id }}" /></form></td></tr>
+                    <tr><td><form action="" method="post" id="customerresumeform{{ customer.id }}">{% csrf_token %}<a href="" id="customerresumelink{{ customer.id }}">{{ customer.name }}</a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ customer.id }}" /></form></td></tr>
                     <script type="text/javascript">$(document).ready(function() {$("#customerresumelink{{ customer.id }}").click(function() {$("#customerresumeform{{ customer.id }}").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#customerresumeform{{ customer.id }}").submit();return false;})});</script>
                 {% endif %}
         	{% endfor %}
