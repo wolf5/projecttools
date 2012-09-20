@@ -176,6 +176,7 @@
 <div class="comment">
 	<form action="" method="post" id="commentform">
 		{% csrf_token %}
+	    {% csrf_token %}
 		{% if topTaskEntry %}
 			<input id="comment" type="text" name="comment" value="{{ topTaskEntry.comment }}"/>
 		{% else %}
