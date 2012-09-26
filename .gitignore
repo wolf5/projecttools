@@ -4,4 +4,4 @@
 database.sqlite
 projecttools/sitestatic
 .settings
-
+.pydevproject
