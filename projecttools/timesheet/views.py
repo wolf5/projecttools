@@ -79,20 +79,12 @@ def clock(request):
     else:
         presence_duration = timedelta()
     presence_date = presence_start.replace(hour = 0, minute = 0, second = 0, microsecond = 0) if presence_start is not None else None
+
+    # calculate working time
+    days_total = get_days_total(request.user, presence_date)
     
-    # 0ffwork sum for present day
-    offwork_customer = Customer.objects.get(name = "0ffwork")
-    todays_offwork_duration = get_days_total(request.user, offwork_customer, presence_date) if offwork_customer is not None and presence_date is not None else timedelta()
-    
-    # 1ntern sum for present day
-    intern_customer = Customer.objects.get(name = "1ntern")
-    todays_intern_duration = get_days_total(request.user, intern_customer, presence_date) if intern_customer is not None and presence_date is not None else timedelta()
-    
-    # really worked
-    real_work_duration = presence_duration - todays_offwork_duration
-    
-    # billable time
-    billable_time = real_work_duration - todays_intern_duration
+    # calculate time spent on breaks
+    days_breaks = presence_duration - days_total if days_total else timedelta()
     
     return render(request, "timesheet/clock.html", {"state": state, 
                                                     "customers": customers, 
@@ -105,10 +97,8 @@ def clock(request):
                                                     "presence_start": presence_start, 
                                                     "presence_end": presence_end, 
                                                     "presence_duration": presence_duration, 
-                                                    "todays_offwork_duration": todays_offwork_duration, 
-                                                    "real_work_duration": real_work_duration, 
-                                                    "todays_intern_duration": todays_intern_duration, 
-                                                    "billable_time": billable_time})
+                                                    "days_total": days_total, 
+                                                    "days_breaks": days_breaks})
 
 # Customer report view.
 # This view requires the user to be logged in.
@@ -229,22 +219,28 @@ def monthly_time_statistics_csv(request, year, month):
     month = int(month) if month else None
     if year and month:
         rows = []
-        rows.append([u"#Datum", u"Präsenzzeit Start", u"Präsenzzeit Ende", u"Total Pause"])
+        rows.append([u"#Datum", u"Präsenzzeit Start", u"Präsenzzeit Ende", u"Total Präsenzzeit", u"Total Pause"])
         current_date = date(year, month, 1)
         one_day = timedelta(days = 1)
         while current_date.month == month:
             
             presence_start = get_presence_start(request.user, current_date)
             presence_end = get_presence_end(request.user, current_date)
-            offwork_customer = Customer.objects.get(name = "0ffwork")
+            if presence_start and presence_end:
+                presence_duration = presence_end - presence_start
+            else:
+                presence_duration = timedelta()
             presence_date = presence_start.replace(hour = 0, minute = 0, second = 0, microsecond = 0) if presence_start is not None else None
-            todays_offwork_duration = get_days_total(request.user, offwork_customer, presence_date) if offwork_customer is not None and presence_date is not None else timedelta()
+            days_total = get_days_total(request.user, presence_date) if presence_date else timedelta()
+            days_breaks = presence_duration - days_total if days_total else timedelta()
             
             current_date_as_string = djangoDate(current_date, "d.m.Y")
             presence_start_as_string = djangoDate(presence_start, "H:i") if presence_start else "00:00"
             presence_end_as_string = djangoDate(presence_end, "H:i") if presence_end else "00:00"
-            todays_offwork_duration_as_string = duration(todays_offwork_duration, "%H:%m")
-            rows.append([unicode(current_date_as_string), unicode(presence_start_as_string), unicode(presence_end_as_string), unicode(todays_offwork_duration_as_string)])
+            days_total_as_string = duration(days_total, "%H:%m")
+            days_breaks_as_string = duration(days_breaks, "%H:%m")
+            
+            rows.append([unicode(current_date_as_string), unicode(presence_start_as_string), unicode(presence_end_as_string), unicode(days_total_as_string), unicode(days_breaks_as_string)])
             
             # if we're looking at a sunday, insert two empty lines afterwards.
             if current_date.isoweekday() == 7:

@@ -204,13 +204,13 @@
     </table>
 </div>
 <div class="entries">
-    <p>
-        Präsenzzeit vom {{ presence_date|date:"d.m.Y" }}: {{ presence_start }} - {{ presence_end }} {{ presence_duration|duration:"%h:%m" }} ({{ presence_duration|duration:"%oh"}})<br/>
-        Pause / Nicht Arbeitszeit: {{ todays_offwork_duration|duration:"%h:%m" }} ({{ todays_offwork_duration|duration:"%oh" }})<br/>
-        Reine Arbeitszeit: {{ real_work_duration|duration:"%h:%m" }} ({{ real_work_duration|duration:"%oh" }})<br/>
-        Interne Arbeitszeit: {{ todays_intern_duration|duration:"%h:%m" }} ({{ todays_intern_duration|duration:"%oh" }})<br/>
-        Verrechenbare Arbeitszeit: {{ billable_time|duration:"%h:%m" }} ({{ billable_time|duration:"%oh" }})
-    </p>
+    {% if presence_date %}
+        <p>
+            Präsenzzeit vom {{ presence_date|date:"d.m.Y" }}: {{ presence_start|date:"H:i" }} - {{ presence_end|date:"H:i" }} {{ presence_duration|duration:"%Hh %mm" }} ({{ presence_duration|duration:"%oh"}})<br/>
+            Arbeitszeit vom {{ presence_date|date:"d.m.Y" }}: {{ days_total|duration:"%Hh %mm" }}<br/>
+            Pause vom {{ presence_date|date:"d.m.Y" }}: {{ days_breaks|duration:"%Hh %mm" }}
+        </p>
+    {% endif %}
     <table>
         <tbody>
         	{% for entry in entries %}
@@ -219,7 +219,7 @@
         		{% else %}
         		<tr>
         		{% endif %}
-        		<td><a href="/customer/{{ entry.customer.id }}/report/">{{ entry.customer.name }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.m.Y H.i" }} - {{ entry.end|date:"d.m.Y H.i" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%h:%m" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%oh" }})</a></td><td class="comment"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td>
+        		<td><a href="/customer/{{ entry.customer.id }}/report/">{{ entry.customer.name }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.m.Y H.i" }} - {{ entry.end|date:"d.m.Y H.i" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%hh %mm" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%oh" }})</a></td><td class="comment"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td>
         		</tr>
         	{% endfor %}
         </tbody>

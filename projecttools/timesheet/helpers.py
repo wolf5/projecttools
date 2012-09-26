@@ -154,7 +154,10 @@ def get_presence_start(user, date = None):
         year, month, day = date.year, date.month, date.day
     else:
         top_task_entry = getCurrentTaskEntry(user)
-        year, month, day = top_task_entry.start.year, top_task_entry.start.month, top_task_entry.start.day
+        if not top_task_entry:
+            return None
+        else:
+            year, month, day = top_task_entry.start.year, top_task_entry.start.month, top_task_entry.start.day
     try:
         return Entry.objects.filter(owner = user, start__year = year, start__month = month, start__day = day).order_by("start")[0].start
     except IndexError, Entry.DoesNotExist:
@@ -168,19 +171,34 @@ def get_presence_end(user, date = None):
         year, month, day = date.year, date.month, date.day
     else:
         presence_start = get_presence_start(user)
-        presence_date = presence_start.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
-        year, month, day = presence_date.year, presence_date.month, presence_date.day
+        if not presence_start:
+            return None
+        else:
+            presence_date = presence_start.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
+            year, month, day = presence_date.year, presence_date.month, presence_date.day
     try:
         return Entry.objects.filter(owner = user, end__year = year, end__month = month, end__day = day).order_by("-end")[0].end
     except IndexError, Entry.DoesNotExist:
         return None
 
-def get_days_total(user, customer, date):
+def get_days_total(user, date, customer = None):
     """
-    Retrieves the total of hours logged for the given user on the given date.
+    Retrieves the total time logged for the given date and customer. If customer
+    is none, sum over all customers.
+    Also counts running tasks.
     """
-    days_completed_entries = Entry.objects.filter(owner = user, customer = customer, start__year = date.year, start__month = date.month, start__day = date.day, end__isnull = False)
+    
+    # Get the corresponding entries.
+    if customer is not None:
+        days_entries = Entry.objects.filter(owner = user, customer = customer, start__year = date.year, start__month = date.month, start__day = date.day)
+    else:
+        days_entries = Entry.objects.filter(owner = user, start__year = date.year, start__month = date.month, start__day = date.day)
+        
+    # Sum it all up.
     days_total = timedelta()
-    for entry in days_completed_entries:
-        days_total = days_total + (entry.end - entry.start)
+    for entry in days_entries:
+        if entry.end:
+            days_total = days_total + (entry.end - entry.start)
+        else:
+            days_total = days_total + (datetime.now() - entry.start)
     return days_total

@@ -97,7 +97,7 @@
                 		<a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.end|date:"d.m.Y H.i" }}</a>
                 	</td>
                 	<td class="hoursandminutes">
-                		<a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%H:%m" }}</a>
+                		<a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%Hh %mm" }}</a>
                 	</td>
                 	<td class="decimalhour">
                 		<a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%Oh" }})</a>
