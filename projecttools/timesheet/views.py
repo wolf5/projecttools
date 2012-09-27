@@ -81,7 +81,7 @@ def clock(request):
     presence_date = presence_start.replace(hour = 0, minute = 0, second = 0, microsecond = 0) if presence_start is not None else None
 
     # calculate working time
-    days_total = get_days_total(request.user, presence_date)
+    days_total = get_days_total(request.user, presence_date) if presence_date else timedelta()
     
     # calculate time spent on breaks
     days_breaks = presence_duration - days_total if days_total else timedelta()
