@@ -1,0 +1,794 @@
+[
+    {
+        "pk": 5, 
+        "model": "contenttypes.contenttype", 
+        "fields": {
+            "model": "contenttype", 
+            "name": "content type", 
+            "app_label": "contenttypes"
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "contenttypes.contenttype", 
+        "fields": {
+            "model": "customer", 
+            "name": "customer", 
+            "app_label": "timesheet"
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "contenttypes.contenttype", 
+        "fields": {
+            "model": "entry", 
+            "name": "entry", 
+            "app_label": "timesheet"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "contenttypes.contenttype", 
+        "fields": {
+            "model": "group", 
+            "name": "group", 
+            "app_label": "auth"
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "contenttypes.contenttype", 
+        "fields": {
+            "model": "logentry", 
+            "name": "log entry", 
+            "app_label": "admin"
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "contenttypes.contenttype", 
+        "fields": {
+            "model": "message", 
+            "name": "message", 
+            "app_label": "auth"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "contenttypes.contenttype", 
+        "fields": {
+            "model": "permission", 
+            "name": "permission", 
+            "app_label": "auth"
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "contenttypes.contenttype", 
+        "fields": {
+            "model": "session", 
+            "name": "session", 
+            "app_label": "sessions"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "contenttypes.contenttype", 
+        "fields": {
+            "model": "user", 
+            "name": "user", 
+            "app_label": "auth"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "timesheet.customer", 
+        "fields": {
+            "name": "Dr. Gross"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "timesheet.customer", 
+        "fields": {
+            "name": "Fam. Christ"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "timesheet.customer", 
+        "fields": {
+            "name": "Kindergarten am Bach"
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "timesheet.customer", 
+        "fields": {
+            "name": "Thomas S."
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "timesheet.customer", 
+        "fields": {
+            "name": "Thomas B."
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "timesheet.customer", 
+        "fields": {
+            "name": "Fr. Graf"
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "timesheet.customer", 
+        "fields": {
+            "name": "Schwarz"
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "timesheet.customer", 
+        "fields": {
+            "name": "Weiss"
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "timesheet.customer", 
+        "fields": {
+            "name": "Fischli AG"
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "timesheet.customer", 
+        "fields": {
+            "name": "Brunner GmbH"
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "timesheet.customer", 
+        "fields": {
+            "name": "_Intern Administration"
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "timesheet.customer", 
+        "fields": {
+            "name": "_Intern Einkauf"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 3, 
+            "start": "2012-05-01 08:30:00", 
+            "end": "2012-05-01 12:00:00", 
+            "owner": 2, 
+            "comment": "Hecken Stutzen"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 3, 
+            "start": "2012-06-05 08:30:00", 
+            "end": "2012-06-05 12:00:00", 
+            "owner": 2, 
+            "comment": "Hecken Stutzen"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 3, 
+            "start": "2012-07-03 08:30:00", 
+            "end": "2012-07-03 12:00:00", 
+            "owner": 2, 
+            "comment": "Hecken Stutzen"
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 3, 
+            "start": "2012-08-07 08:30:00", 
+            "end": "2012-08-07 12:00:00", 
+            "owner": 2, 
+            "comment": "Hecken Stutzen"
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 3, 
+            "start": "2012-09-04 08:30:00", 
+            "end": "2012-09-04 12:00:00", 
+            "owner": 2, 
+            "comment": "Hecken Stutzen"
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 11, 
+            "start": "2012-09-27 16:03:25", 
+            "end": "2012-09-27 21:14:24", 
+            "owner": 2, 
+            "comment": "Rechnungen stellen"
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 12, 
+            "start": "2012-04-27 15:53:22", 
+            "end": "2012-04-27 19:34:15", 
+            "owner": 2, 
+            "comment": "Hornbach Materialeinkauf"
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 12, 
+            "start": "2012-04-27 15:12:28", 
+            "end": "2012-04-27 19:24:52", 
+            "owner": 3, 
+            "comment": "Hornbach"
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 12, 
+            "start": "2012-07-02 07:13:10", 
+            "end": "2012-07-02 10:46:37", 
+            "owner": 2, 
+            "comment": "Hornbach"
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 12, 
+            "start": "2012-07-02 07:25:13", 
+            "end": "2012-07-02 10:52:38", 
+            "owner": 3, 
+            "comment": "Hornbach Einkauf"
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 10, 
+            "start": "2012-07-03 09:08:13", 
+            "end": "2012-07-03 11:52:38", 
+            "owner": 3, 
+            "comment": "Beete Vorgarten"
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 10, 
+            "start": "2012-07-03 12:48:20", 
+            "end": "2012-07-03 16:04:11", 
+            "owner": 3, 
+            "comment": "Beete Vorgarten"
+        }
+    }, 
+    {
+        "pk": 13, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 10, 
+            "start": "2012-07-03 13:15:24", 
+            "end": "2012-07-03 16:00:21", 
+            "owner": 2, 
+            "comment": "Beete Vorgarten (mit Bob)"
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 10, 
+            "start": "2012-09-12 08:15:24", 
+            "end": "2012-09-12 15:10:53", 
+            "owner": 2, 
+            "comment": "Beete Vorgarten"
+        }
+    }, 
+    {
+        "pk": 15, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 4, 
+            "start": "2012-09-09 14:15:24", 
+            "end": "2012-09-09 14:47:53", 
+            "owner": 4, 
+            "comment": "Giessen (Ferien)"
+        }
+    }, 
+    {
+        "pk": 16, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 4, 
+            "start": "2012-09-10 14:24:00", 
+            "end": "2012-09-10 15:01:09", 
+            "owner": 4, 
+            "comment": "Giessen (Ferien)"
+        }
+    }, 
+    {
+        "pk": 17, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 4, 
+            "start": "2012-09-11 11:04:02", 
+            "end": "2012-09-11 11:35:49", 
+            "owner": 4, 
+            "comment": "Giessen (Ferien)"
+        }
+    }, 
+    {
+        "pk": 18, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 4, 
+            "start": "2012-09-12 13:24:52", 
+            "end": "2012-09-12 13:45:49", 
+            "owner": 4, 
+            "comment": "Giessen (Ferien)"
+        }
+    }, 
+    {
+        "pk": 19, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 4, 
+            "start": "2012-09-13 12:14:22", 
+            "end": "2012-09-13 12:37:14", 
+            "owner": 4, 
+            "comment": "Giessen (Ferien)"
+        }
+    }, 
+    {
+        "pk": 20, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 4, 
+            "start": "2012-09-14 15:54:14", 
+            "end": "2012-09-14 16:18:09", 
+            "owner": 4, 
+            "comment": "Giessen (Ferien)"
+        }
+    }, 
+    {
+        "pk": 21, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 2, 
+            "start": "2012-09-21 09:10:04", 
+            "end": "2012-09-21 11:58:09", 
+            "owner": 3, 
+            "comment": "Gem\u00fcsebeet"
+        }
+    }, 
+    {
+        "pk": 22, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 2, 
+            "start": "2012-09-21 12:20:19", 
+            "end": "2012-09-21 18:58:57", 
+            "owner": 3, 
+            "comment": "Gem\u00fcsebeet"
+        }
+    }, 
+    {
+        "pk": 23, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 2, 
+            "start": "2012-09-22 08:48:29", 
+            "end": "2012-09-22 11:34:31", 
+            "owner": 3, 
+            "comment": "Gem\u00fcsebeet"
+        }
+    }, 
+    {
+        "pk": 24, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 2, 
+            "start": "2012-09-22 12:08:16", 
+            "end": "2012-09-22 16:48:14", 
+            "owner": 3, 
+            "comment": "Gem\u00fcsebeet"
+        }
+    }, 
+    {
+        "pk": 25, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 9, 
+            "start": "2012-09-18 07:15:16", 
+            "end": "2012-09-18 12:48:14", 
+            "owner": 3, 
+            "comment": "B\u00e4ume um Einfahrt f\u00e4llen"
+        }
+    }, 
+    {
+        "pk": 26, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 9, 
+            "start": "2012-09-18 13:15:16", 
+            "end": "2012-09-18 18:22:52", 
+            "owner": 3, 
+            "comment": "B\u00e4ume um Einfahrt f\u00e4llen"
+        }
+    }, 
+    {
+        "pk": 27, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 6, 
+            "start": "2012-09-12 08:13:16", 
+            "end": "2012-09-12 10:09:15", 
+            "owner": 4, 
+            "comment": "Unkraut"
+        }
+    }, 
+    {
+        "pk": 28, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 6, 
+            "start": "2012-06-17 09:24:16", 
+            "end": "2012-06-17 11:22:14", 
+            "owner": 4, 
+            "comment": "Unkraut"
+        }
+    }, 
+    {
+        "pk": 29, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 6, 
+            "start": "2012-09-17 09:57:16", 
+            "end": "2012-09-17 11:59:14", 
+            "owner": 4, 
+            "comment": "Unkraut"
+        }
+    }, 
+    {
+        "pk": 30, 
+        "model": "timesheet.entry", 
+        "fields": {
+            "customer": 6, 
+            "start": "2012-08-12 08:13:16", 
+            "end": "2012-08-12 10:09:15", 
+            "owner": 4, 
+            "comment": "Unkraut"
+        }
+    }, 
+    {
+        "pk": 19, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_logentry", 
+            "name": "Can add log entry", 
+            "content_type": 7
+        }
+    }, 
+    {
+        "pk": 20, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_logentry", 
+            "name": "Can change log entry", 
+            "content_type": 7
+        }
+    }, 
+    {
+        "pk": 21, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_logentry", 
+            "name": "Can delete log entry", 
+            "content_type": 7
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_group", 
+            "name": "Can add group", 
+            "content_type": 2
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_group", 
+            "name": "Can change group", 
+            "content_type": 2
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_group", 
+            "name": "Can delete group", 
+            "content_type": 2
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_message", 
+            "name": "Can add message", 
+            "content_type": 4
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_message", 
+            "name": "Can change message", 
+            "content_type": 4
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_message", 
+            "name": "Can delete message", 
+            "content_type": 4
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_permission", 
+            "name": "Can add permission", 
+            "content_type": 1
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_permission", 
+            "name": "Can change permission", 
+            "content_type": 1
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_permission", 
+            "name": "Can delete permission", 
+            "content_type": 1
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_user", 
+            "name": "Can add user", 
+            "content_type": 3
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_user", 
+            "name": "Can change user", 
+            "content_type": 3
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_user", 
+            "name": "Can delete user", 
+            "content_type": 3
+        }
+    }, 
+    {
+        "pk": 13, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_contenttype", 
+            "name": "Can add content type", 
+            "content_type": 5
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_contenttype", 
+            "name": "Can change content type", 
+            "content_type": 5
+        }
+    }, 
+    {
+        "pk": 15, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_contenttype", 
+            "name": "Can delete content type", 
+            "content_type": 5
+        }
+    }, 
+    {
+        "pk": 16, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_session", 
+            "name": "Can add session", 
+            "content_type": 6
+        }
+    }, 
+    {
+        "pk": 17, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_session", 
+            "name": "Can change session", 
+            "content_type": 6
+        }
+    }, 
+    {
+        "pk": 18, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_session", 
+            "name": "Can delete session", 
+            "content_type": 6
+        }
+    }, 
+    {
+        "pk": 22, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_customer", 
+            "name": "Can add customer", 
+            "content_type": 8
+        }
+    }, 
+    {
+        "pk": 23, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_customer", 
+            "name": "Can change customer", 
+            "content_type": 8
+        }
+    }, 
+    {
+        "pk": 24, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_customer", 
+            "name": "Can delete customer", 
+            "content_type": 8
+        }
+    }, 
+    {
+        "pk": 25, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_entry", 
+            "name": "Can add entry", 
+            "content_type": 9
+        }
+    }, 
+    {
+        "pk": 26, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_entry", 
+            "name": "Can change entry", 
+            "content_type": 9
+        }
+    }, 
+    {
+        "pk": 27, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_entry", 
+            "name": "Can delete entry", 
+            "content_type": 9
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "alice", 
+            "first_name": "Alice", 
+            "last_name": "", 
+            "is_active": true, 
+            "is_superuser": true, 
+            "is_staff": true, 
+            "last_login": "2012-09-28 16:23:45", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "sha1$4f767$0f47fc8a3b0c6de7b11ffe1b0f9f72a0531edef9", 
+            "email": "alice@beautifulgardens.ch", 
+            "date_joined": "2012-09-28 13:31:23"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "bob", 
+            "first_name": "Bob", 
+            "last_name": "", 
+            "is_active": true, 
+            "is_superuser": true, 
+            "is_staff": true, 
+            "last_login": "2012-09-28 16:31:02", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "sha1$1207f$455e036af9334b50bb48a4d43961059d62776414", 
+            "email": "bob@beautifulgardens.ch", 
+            "date_joined": "2012-09-28 13:35:26"
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "charlie", 
+            "first_name": "Charlie", 
+            "last_name": "", 
+            "is_active": true, 
+            "is_superuser": false, 
+            "is_staff": true, 
+            "last_login": "2012-09-28 16:36:55", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "sha1$55668$068634671244723576e28cfb3667ccb90f75fe61", 
+            "email": "charlie@beautifulgardens.ch", 
+            "date_joined": "2012-09-28 13:35:59"
+        }
+    }
+]
