@@ -214,13 +214,16 @@
     <table>
         <tbody>
         	{% for entry in entries %}
-        		{% if forloop.first %}
-        		<tr class="current">
+        	   <tr class="{% if forloop.first %}current{% endif %} {% if entry.daily_total %}has_daily_total{% endif %}">
+        		{% if entry.daily_total %}
+        		  <td class="has_daily_total"><a href="/customer/{{ entry.customer.id }}/report/">{{ entry.customer.name }}</a></td><td class="has_daily_total"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.m.Y H.i" }} - {{ entry.end|date:"d.m.Y H.i" }}</a></td><td class="has_daily_total"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%hh %mm" }}</a></td><td class="has_daily_total"><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%oh" }})</a></td><td class="comment has_daily_total"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td><td class="daily_total has_daily_total">{{ entry.daily_total|duration:"%Hh %mm" }} ({{ entry.daily_total|duration:"%oh" }})</td>
         		{% else %}
-        		<tr>
+        		  <td><a href="/customer/{{ entry.customer.id }}/report/">{{ entry.customer.name }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.m.Y H.i" }} - {{ entry.end|date:"d.m.Y H.i" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%hh %mm" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%oh" }})</a></td><td class="comment"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td><td>&nbsp;</td>
         		{% endif %}
-        		<td><a href="/customer/{{ entry.customer.id }}/report/">{{ entry.customer.name }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.m.Y H.i" }} - {{ entry.end|date:"d.m.Y H.i" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%hh %mm" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%oh" }})</a></td><td class="comment"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td>
         		</tr>
+        		{% if entry.daily_total %}
+        		<tr><td class="spacer" colspan="6"></td></tr>
+        		{% endif %}
         	{% endfor %}
         </tbody>
     </table>

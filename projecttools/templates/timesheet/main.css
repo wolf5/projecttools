@@ -188,6 +188,17 @@ div.entries tr.current {
     color: rgb(0, 0, 0);
 }
 
+div.entries td.has_daily_total {
+    padding-bottom: 2px;
+    border-bottom: 1px solid rgb(235, 235, 235);
+    color: rgb(158, 158, 158);
+}
+
+td.daily_total {
+    font-size: 85%;
+    vertical-align: bottom;
+}
+
 div.entries tr.total {
 	font-size: 120%;
 } 

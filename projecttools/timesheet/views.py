@@ -86,6 +86,31 @@ def clock(request):
     # calculate time spent on breaks
     days_breaks = presence_duration - days_total if days_total else timedelta()
     
+    # calculate daily totals    
+    if len(entries) == 1:
+        entry = entries[0]
+        if entry.end:
+            daily_total = entry.end - entry.start
+        else:
+            daily_total = datetime.now() - entry.start
+        setattr(entry, "daily_total", daily_total)
+    elif len(entries) > 1:
+        previous_entry = None
+        daily_total = timedelta()
+        
+        for index, entry in enumerate(entries):
+            if previous_entry:
+                if previous_entry.start.day != entry.start.day or previous_entry.start.month != entry.start.month or previous_entry.start.year != entry.start.year:
+                    setattr(entries[index - 1], "daily_total", daily_total)
+                    daily_total = timedelta()
+            if entry.end:
+                daily_total = daily_total + (entry.end - entry.start)
+            else:
+                daily_total = daily_total + (datetime.now() - entry.start)
+            
+            previous_entry = entry
+        setattr(entries[len(entries) - 1], "daily_total", daily_total)
+    
     return render(request, "timesheet/clock.html", {"state": state, 
                                                     "customers": customers, 
                                                     "currentCustomer": currentCustomer, 
