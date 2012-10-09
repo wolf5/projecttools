@@ -244,7 +244,7 @@ def monthly_time_statistics_csv(request, year, month):
     month = int(month) if month else None
     if year and month:
         rows = []
-        rows.append([u"#Datum", u"Präsenzzeit Start", u"Präsenzzeit Ende", u"Total Präsenzzeit", u"Total Pause"])
+        rows.append([u"#Datum", u"Präsenzzeit Start", u"Präsenzzeit Ende", u"Total Pause", u"Total Präsenzzeit"])
         current_date = date(year, month, 1)
         one_day = timedelta(days = 1)
         while current_date.month == month:
@@ -265,7 +265,7 @@ def monthly_time_statistics_csv(request, year, month):
             days_total_as_string = duration(days_total, "%H:%m")
             days_breaks_as_string = duration(days_breaks, "%H:%m")
             
-            rows.append([unicode(current_date_as_string), unicode(presence_start_as_string), unicode(presence_end_as_string), unicode(days_total_as_string), unicode(days_breaks_as_string)])
+            rows.append([unicode(current_date_as_string), unicode(presence_start_as_string), unicode(presence_end_as_string), unicode(days_breaks_as_string), unicode(days_total_as_string)])
             
             # if we're looking at a sunday, insert two empty lines afterwards.
             if current_date.isoweekday() == 7:
