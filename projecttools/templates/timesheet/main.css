@@ -275,3 +275,7 @@ div#delaypopup {
 td.comment {
 	max-width: 450px;
 }
+
+p {
+    margin-top: 0px;
+}

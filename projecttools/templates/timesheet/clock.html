@@ -38,6 +38,72 @@
 	    document.title = hours + "h" + minutes + "m" + seconds + "s {{ currentCustomer.name }}";
 	}
 	
+    // Sends a resume command via form submit
+    function resume(sourceElement) {
+        lockCommands();
+        
+        var comment = $("input#comment").val();
+        var delay = sourceElement.getAttribute("data-delay");
+        var resumeform = $("#resumeform");
+        var delayInput = $("#resumeform input#delay");
+        
+        resumeform.append($("<input>").attr({type: "hidden", name: "comment", value: comment}));
+        delayInput.val(delay);
+        resumeform.submit();
+        return false;
+    }
+    
+    // Sends a pause command via form submit
+    function pause() {
+        lockCommands();
+        
+        var pauseform = $("#pauseform");
+        pauseform.submit();
+        return false;
+    }
+    
+    // Sends a pause and resume command via form submit
+    function pauseAndResume(sourceElement) {
+        lockCommands();
+        
+        var comment = $("input#comment").val();
+        var duration = sourceElement.getAttribute("data-duration");
+        var pauseform = $("#pauseform");
+        var durationInput = $("#pauseform input#duration");
+        var commandInput = $("#pauseform input#command");
+        
+        pauseform.append($("<input>").attr({type: "hidden", name: "comment", value: comment}));
+        durationInput.val(duration);
+        commandInput.val("pauseAndResume");
+        pauseform.submit();
+        return false;
+    }
+    
+    // Sends a resume command for a specific customer via form submit
+    function customerResume(sourceElement) {
+        lockCommands();
+        
+        var comment = $("input#comment").val();
+        var commentInput = $("#customerresumeform input#comment");
+        commentInput.val(comment);
+        
+        var customer = sourceElement.getAttribute("data-customer");
+        var customerInput = $("#customerresumeform input#customer");
+        customerInput.val(customer);
+        
+        var customerResumeForm = $("#customerresumeform");
+        customerResumeForm.submit();
+        return false;
+    }
+    
+    // Locks all command links (pause, resume etc.) to avoid duplicate requests.
+    function lockCommands() {
+        $("a.pauseresume, a.resume, a.pause, a.customerresume").off("click");
+        $("a.pauseresume, a.resume, a.pause, a.customerresume").click(function() {
+            return false;
+        });
+    }
+	
 	// do when document gets loaded
 	$(document).ready(function() {
 		
@@ -93,6 +159,28 @@
 	        	}
 	        });
 	    {% endif %}
+	    
+	    // Attach handlers to pause and resume links
+	    $("a.pauseresume").each(function() {
+            $(this).click(function() {
+                pauseAndResume(this);
+            });
+        });
+        $("a.resume").each(function() {
+            $(this).click(function() {
+                resume(this);
+            });
+        });
+        $("a.pause").each(function() {
+            $(this).click(function() {
+                pause();
+            });
+        });
+        $("a.customerresume").each(function() {
+            $(this).click(function() {
+                customerResume(this);
+            });
+        });
 	});
 {% endblock js %}
 
@@ -127,43 +215,27 @@
 		<div id="pauseresumebutton">
 	        <form action="" method="post" id="resumeform">
 			{% csrf_token %}
-	        	<a href="#" id="resumelink"><img src="{{ STATIC_URL }}play.png"></a>
+	        	<a href="#" class="resume" data-delay="0"><img src="{{ STATIC_URL }}play.png"></a>
 	        	<input type="hidden" id="command" name="command" value="resume" />
 	        	<input type="hidden" name="customer" value="{{ currentCustomer.id }}" />
 	        	<input type="hidden" id="delay" name="delay" value="0"/>
 	        </form>
 	    </div>
 	    <div id="delaypopup">
-	        Ich habe vergessen, mich vor <a href="#" id="resumelink5m">5m</a> <a href="#" id="resumelink10m">10m</a> <a href="#" id="resumelink15m">15m</a> <a href="#" id="resumelink30m">30m</a> <a href="#" id="resumelink1h">1h</a> <a href="#" id="resumelink1.5h">1.5h</a> <a href="#" id="resumelink2h">2h</a> einzustempeln.
+	        Ich habe vergessen, mich vor <a href="#" class="resume" data-delay="5">5m</a> <a href="#" class="resume" data-delay="10">10m</a> <a href="#" class="resume" data-delay="15">15m</a> <a href="#" class="resume" data-delay="30">30m</a> <a href="#" class="resume" data-delay="60">1h</a> <a href="#" class="resume" data-delay="90">1.5h</a> <a href="#" class="resume" data-delay="120">2h</a> einzustempeln.
 	    </div>
-	    <script type="text/javascript">$(document).ready(function() {$("#resumelink").click(function() {$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
-        <script type="text/javascript">$(document).ready(function() {$("#resumelink5m").click(function() {$("#resumeform input#delay").val(5);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
-        <script type="text/javascript">$(document).ready(function() {$("#resumelink10m").click(function() {$("#resumeform input#delay").val(10);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
-        <script type="text/javascript">$(document).ready(function() {$("#resumelink15m").click(function() {$("#resumeform input#delay").val(15);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
-        <script type="text/javascript">$(document).ready(function() {$("#resumelink30m").click(function() {$("#resumeform input#delay").val(30);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
-        <script type="text/javascript">$(document).ready(function() {$("#resumelink1h").click(function() {$("#resumeform input#delay").val(60);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
-        <script type="text/javascript">$(document).ready(function() {$("#resumelink1.5h").click(function() {$("#resumeform input#delay").val(90);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
-        <script type="text/javascript">$(document).ready(function() {$("#resumelink2h").click(function() {$("#resumeform input#delay").val(120);$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#resumeform").submit();return false;})});</script>
 	{% else %}
 		<div id="pauseresumebutton">
 			<form action="" method="post" id="pauseform" style="margin: 0px;">
 			{% csrf_token %}
-	        	<a href="#" id="pauseresumelink"><img src="{{ STATIC_URL }}pause.png"></a>
+	        	<a href="#" class="pause" data-duration="0"><img src="{{ STATIC_URL }}pause.png"></a>
 	        	<input type="hidden" id="command" name="command" value="pause"/>
 	        	<input type="hidden" id="duration" name="duration" value="0"/>
 	        </form>
 	    </div>
 		<div id="delaypopup">
-	        Ich war gerade in einer <a href="#" id="pauseresumelink5m">5m</a> <a href="#" id="pauseresumelink10m">10m</a> <a href="#" id="pauseresumelink15m">15m</a> <a href="#" id="pauseresumelink30m">30m</a> <a href="#" id="pauseresumelink1h">1h</a> <a href="#" id="pauseresumelink1.5h">1.5h</a> <a href="#" id="pauseresumelink2h">2h</a>-Pause.<br/>
+	        Ich war gerade in einer <a href="#" class="pauseresume" data-duration="5">5m</a> <a href="#" class="pauseresume" data-duration="10">10m</a> <a href="#" class="pauseresume" data-duration="15">15m</a> <a href="#" class="pauseresume" data-duration="30">30m</a> <a href="#" class="pauseresume" data-duration="60">1h</a> <a href="#" class="pauseresume" data-duration="90">1.5h</a> <a href="#" class="pauseresume" data-duration="120">2h</a>-Pause.<br/>
 	    </div>
-	    <script type="text/javascript">$(document).ready(function() {$("#pauseresumelink").click(function() {$("#pauseform").submit();return false;})});</script>
-        <script type="text/javascript">$(document).ready(function() {$("#pauseresumelink5m").click(function() {$("#pauseform input#duration").val(5);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
-        <script type="text/javascript">$(document).ready(function() {$("#pauseresumelink10m").click(function() {$("#pauseform input#duration").val(10);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
-        <script type="text/javascript">$(document).ready(function() {$("#pauseresumelink15m").click(function() {$("#pauseform input#duration").val(15);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
-        <script type="text/javascript">$(document).ready(function() {$("#pauseresumelink30m").click(function() {$("#pauseform input#duration").val(30);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
-        <script type="text/javascript">$(document).ready(function() {$("#pauseresumelink1h").click(function() {$("#pauseform input#duration").val(60);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
-        <script type="text/javascript">$(document).ready(function() {$("#pauseresumelink1.5h").click(function() {$("#pauseform input#duration").val(90);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
-        <script type="text/javascript">$(document).ready(function() {$("#pauseresumelink2h").click(function() {$("#pauseform input#duration").val(120);$("#pauseform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#pauseform input#command").val("pauseAndResume");$("#pauseform").submit();return false;})});</script>
 	{% endif %}
 </div>
 <div class="customer">
@@ -185,19 +257,23 @@
 </div>
 <div class="leftlist">
 	<div class="section">Kunden</div>
+	<form action="" method="post" id="customerresumeform">
+	    {% csrf_token %}
+	    <input type="hidden" id="customer" name="customer" value="0" />
+	    <input type="hidden" id="comment" name="comment" value="" />
+	    <input type="hidden" name="command" value="resume" />
+	</form>
     <table>
         <tbody>
         	{% for customer in customers %}
         		{% if customer == currentCustomer %}
                     {% if state == "running" %}
-                    	<tr><td><a href="#" class="current">{{ customer.name }}</a></td></tr>
+                    	<tr><td><a href="#" class="current pause">{{ customer.name }}</a></td></tr>
                     {% else %}
-                        <tr><td><form action="" method="post" id="customerresumeform{{ customer.id }}">{% csrf_token %}<a href="" id="customerresumelink{{ customer.id }}" class="current">{{ customer.name }}</a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ customer.id }}" /></form></td></tr>
-                        <script type="text/javascript">$(document).ready(function() {$("#customerresumelink{{ customer.id }}").click(function() {$("#customerresumeform{{ customer.id }}").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#customerresumeform{{ customer.id }}").submit();return false;})});</script>
+                        <tr><td><a href="#" class="current customerresume" data-customer="{{ customer.id }}">{{ customer.name }}</a></td></tr>
                     {% endif %}
                 {% else %}
-                    <tr><td><form action="" method="post" id="customerresumeform{{ customer.id }}">{% csrf_token %}<a href="" id="customerresumelink{{ customer.id }}">{{ customer.name }}</a><input type="hidden" name="command" value="resume" /><input type="hidden" name="customer" value="{{ customer.id }}" /></form></td></tr>
-                    <script type="text/javascript">$(document).ready(function() {$("#customerresumelink{{ customer.id }}").click(function() {$("#customerresumeform{{ customer.id }}").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));$("#customerresumeform{{ customer.id }}").submit();return false;})});</script>
+                    <tr><td><a href="#" class="customerresume" data-customer="{{ customer.id }}">{{ customer.name }}</a></td></tr>
                 {% endif %}
         	{% endfor %}
         </tbody>
