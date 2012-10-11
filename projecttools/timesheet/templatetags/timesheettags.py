@@ -65,6 +65,8 @@ def duration(value, arg = "%h:%m"):
     unroundedModMinutes, unroundedModSeconds = divmod(remainder, 60)
     unroundedTotalHours = math.floor(totalSeconds / 3600)
     unroundedTotalMinutes = math.floor(totalSeconds / 60)
+    totalFloatHours = float(totalSeconds) / 3600.0
+    totalModFloatHours = float(totalSeconds % 86400) / 3600.0
     
     if days_smallest_unit and divmod(totalSeconds, 86400)[1] >= 43200:
         totalSeconds = totalSeconds + 86400
@@ -103,11 +105,9 @@ def duration(value, arg = "%h:%m"):
                 elif c == "H":
                     niceOutput = niceOutput + str(int(totalHours))
                 elif c == "o":
-                    decimalModHours = unroundedModHours + (unroundedModMinutes / 60)
-                    niceOutput = niceOutput + ("%.2f" % decimalModHours)
+                    niceOutput = niceOutput + ("%.2f" % totalModFloatHours)
                 elif c == "O":
-                    decimalTotalHours = unroundedTotalHours + (unroundedModMinutes / 60)
-                    niceOutput = niceOutput + ("%.2f" % decimalTotalHours)
+                    niceOutput = niceOutput + ("%.2f" % totalFloatHours)
                 elif c == "D":
                     niceOutput = niceOutput + str(int(totalDays))
                 else:
