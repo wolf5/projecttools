@@ -142,6 +142,7 @@ div.comment input {
 div.leftlist {
     margin: 20px 0px 0px 0px;
     display: inline-block;
+    max-width: 180px;
 }
 
 div.entries {
@@ -278,4 +279,26 @@ td.comment {
 
 p {
     margin-top: 0px;
+}
+
+.warning {
+    color: rgb(222, 95, 0);
+    background-color: rgb(255, 238, 212);
+}
+
+div.warning {
+    color: rgb(222, 95, 0);
+    background-color: rgb(255, 238, 212);
+    border: 2px solid rgb(254, 182, 70);
+    padding: 5px;
+}
+
+div.leftlist a.warning:link, div.leftlist a.warning:visited {
+    color: rgb(222, 95, 0);
+    background-color: rgb(255, 238, 212);
+}
+
+div.leftlist a.warning:hover, div.leftlist a.warning:active {
+    color: rgb(255, 178, 44);
+    background-color: rgb(255, 238, 212);
 }
