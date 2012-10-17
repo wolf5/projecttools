@@ -221,34 +221,36 @@
 
 {% block content %}
 <div id="clock">0h 0m 0s</div>
-<div id="controls">
-	{% if state == "paused" %}
-		<div id="pauseresumebutton">
-	        <form action="" method="post" id="resumeform">
-			{% csrf_token %}
-	        	<a href="#" class="resume" data-delay="0"><img src="{{ STATIC_URL }}play.png"></a>
-	        	<input type="hidden" id="command" name="command" value="resume" />
-	        	<input type="hidden" name="customer" value="{{ currentCustomer.id }}" />
-	        	<input type="hidden" id="delay" name="delay" value="0"/>
-	        </form>
-	    </div>
-	    <div id="delaypopup">
-	        Ich habe vergessen, mich vor <a href="#" class="resume" data-delay="5">5m</a> <a href="#" class="resume" data-delay="10">10m</a> <a href="#" class="resume" data-delay="15">15m</a> <a href="#" class="resume" data-delay="30">30m</a> <a href="#" class="resume" data-delay="60">1h</a> <a href="#" class="resume" data-delay="90">1.5h</a> <a href="#" class="resume" data-delay="120">2h</a> einzustempeln.
-	    </div>
-	{% else %}
-		<div id="pauseresumebutton">
-			<form action="" method="post" id="pauseform" style="margin: 0px;">
-			{% csrf_token %}
-	        	<a href="#" class="pause" data-duration="0"><img src="{{ STATIC_URL }}pause.png"></a>
-	        	<input type="hidden" id="command" name="command" value="pause"/>
-	        	<input type="hidden" id="duration" name="duration" value="0"/>
-	        </form>
-	    </div>
-		<div id="delaypopup">
-	        Ich war gerade in einer <a href="#" class="pauseresume" data-duration="5">5m</a> <a href="#" class="pauseresume" data-duration="10">10m</a> <a href="#" class="pauseresume" data-duration="15">15m</a> <a href="#" class="pauseresume" data-duration="30">30m</a> <a href="#" class="pauseresume" data-duration="60">1h</a> <a href="#" class="pauseresume" data-duration="90">1.5h</a> <a href="#" class="pauseresume" data-duration="120">2h</a>-Pause.<br/>
-	    </div>
-	{% endif %}
-</div>
+{% if customers %}
+    <div id="controls">
+    	{% if state == "paused" %}
+    		<div id="pauseresumebutton">
+    	        <form action="" method="post" id="resumeform">
+    			{% csrf_token %}
+    	        	<a href="#" class="resume" data-delay="0"><img src="{{ STATIC_URL }}play.png"></a>
+    	        	<input type="hidden" id="command" name="command" value="resume" />
+    	        	<input type="hidden" name="customer" value="{{ currentCustomer.id }}" />
+    	        	<input type="hidden" id="delay" name="delay" value="0"/>
+    	        </form>
+    	    </div>
+    	    <div id="delaypopup">
+    	        Ich habe vergessen, mich vor <a href="#" class="resume" data-delay="5">5m</a> <a href="#" class="resume" data-delay="10">10m</a> <a href="#" class="resume" data-delay="15">15m</a> <a href="#" class="resume" data-delay="30">30m</a> <a href="#" class="resume" data-delay="60">1h</a> <a href="#" class="resume" data-delay="90">1.5h</a> <a href="#" class="resume" data-delay="120">2h</a> einzustempeln.
+    	    </div>
+    	{% else %}
+    		<div id="pauseresumebutton">
+    			<form action="" method="post" id="pauseform" style="margin: 0px;">
+    			{% csrf_token %}
+    	        	<a href="#" class="pause" data-duration="0"><img src="{{ STATIC_URL }}pause.png"></a>
+    	        	<input type="hidden" id="command" name="command" value="pause"/>
+    	        	<input type="hidden" id="duration" name="duration" value="0"/>
+    	        </form>
+    	    </div>
+    		<div id="delaypopup">
+    	        Ich war gerade in einer <a href="#" class="pauseresume" data-duration="5">5m</a> <a href="#" class="pauseresume" data-duration="10">10m</a> <a href="#" class="pauseresume" data-duration="15">15m</a> <a href="#" class="pauseresume" data-duration="30">30m</a> <a href="#" class="pauseresume" data-duration="60">1h</a> <a href="#" class="pauseresume" data-duration="90">1.5h</a> <a href="#" class="pauseresume" data-duration="120">2h</a>-Pause.<br/>
+    	    </div>
+    	{% endif %}
+    </div>
+{% endif %}
 <div class="customer">
 	{% if currentCustomer %}
     	{{ currentCustomer.name }}
@@ -274,21 +276,25 @@
 	    <input type="hidden" id="comment" name="comment" value="" />
 	    <input type="hidden" name="command" value="resume" />
 	</form>
-    <table>
-        <tbody>
-        	{% for customer in customers %}
-        		{% if customer == currentCustomer %}
-                    {% if state == "running" %}
-                    	<tr><td><a href="#" class="current pause">{{ customer.name }}</a></td></tr>
+	{% if customers %}
+        <table>
+            <tbody>
+            	{% for customer in customers %}
+            		{% if customer == currentCustomer %}
+                        {% if state == "running" %}
+                        	<tr><td><a href="#" class="current pause">{{ customer.name }}</a></td></tr>
+                        {% else %}
+                            <tr><td><a href="#" class="current customerresume" data-customer="{{ customer.id }}">{{ customer.name }}</a></td></tr>
+                        {% endif %}
                     {% else %}
-                        <tr><td><a href="#" class="current customerresume" data-customer="{{ customer.id }}">{{ customer.name }}</a></td></tr>
+                        <tr><td><a href="#" class="customerresume" data-customer="{{ customer.id }}">{{ customer.name }}</a></td></tr>
                     {% endif %}
-                {% else %}
-                    <tr><td><a href="#" class="customerresume" data-customer="{{ customer.id }}">{{ customer.name }}</a></td></tr>
-                {% endif %}
-        	{% endfor %}
-        </tbody>
-    </table>
+            	{% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="warning"><a href="/admin/timesheet/customer/" class="warning">Sie haben noch keine Kunden angelegt. Klicken Sie hier, um in die Administrator-Oberfläche zu wechseln und Kunden anzulegen.</a></div>
+    {% endif %}
 </div>
 <div class="entries">
     <p>
