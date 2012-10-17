@@ -83,13 +83,24 @@
     function customerResume(sourceElement) {
         lockCommands();
         
-        var comment = $("input#comment").val();
-        var commentInput = $("#customerresumeform input#comment");
-        commentInput.val(comment);
-        
-        var customer = sourceElement.getAttribute("data-customer");
+        var newCustomer = sourceElement.getAttribute("data-customer");
         var customerInput = $("#customerresumeform input#customer");
-        customerInput.val(customer);
+        customerInput.val(newCustomer);
+        
+        {% if currentCustomer %}
+            var currentCustomer = {{ currentCustomer.id }};
+            var commentInput = $("#customerresumeform input#comment");
+            if (newCustomer != currentCustomer) {
+                commentInput.val("");
+            } else {
+                var comment = $("input#comment").val();
+                commentInput.val(comment);
+            }
+        {% else %}
+            var commentInput = $("#customerresumeform input#comment");
+            var comment = $("input#comment").val();
+            commentInput.val(comment);
+        {% endif %}
         
         var customerResumeForm = $("#customerresumeform");
         customerResumeForm.submit();
