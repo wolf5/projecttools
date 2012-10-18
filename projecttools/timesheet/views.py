@@ -10,7 +10,8 @@ from models import Entry
 from django.template import Context, loader
 from datetime import timedelta, datetime, date
 from django.template.defaultfilters import date as djangoDate
-from projecttools.timesheet.constants import COMMAND_PAUSE_AND_RESUME
+from projecttools.timesheet.constants import COMMAND_PAUSE_AND_RESUME,\
+    COMMAND_REPLAY
 from projecttools.timesheet.templatetags.timesheettags import duration
 from projecttools.timesheet.helpers import get_presence_start, get_presence_end,\
     get_days_total
@@ -58,6 +59,16 @@ def clock(request):
                     helpers.resume(request.user, customer, comment, int(request.POST["delay"]))
                 else:
                     helpers.resume(request.user, customer, comment)
+            
+            # replay command (re-use customer and comment of an already 
+            # existing entry
+            elif request.POST["command"] == COMMAND_REPLAY:
+                if "entry" in request.POST:
+                    entry_id = int(request.POST["entry"])
+                    entry = Entry.objects.get(id = entry_id)
+                    # a little bit of safety
+                    if entry.owner == request.user:
+                        helpers.resume(request.user, entry.customer, entry.comment)
     
     if helpers.isAnyTaskRunning(request.user):
         state = STATE_RUNNING
