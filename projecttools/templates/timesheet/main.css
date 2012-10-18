@@ -302,3 +302,28 @@ div.leftlist a.warning:hover, div.leftlist a.warning:active {
     color: rgb(255, 178, 44);
     background-color: rgb(255, 238, 212);
 }
+
+div.entries tr a.replay:hover, div.entries tr a.replay:active {
+    background-color: rgb(255, 255, 255);
+    color: rgb(255, 255, 255);
+}
+
+div.entries tr a.replay:hover img {
+    border: 1px solid black;
+}
+
+a.replay {
+    display: inline-block;
+    width: 10px;
+    height: 11px;
+    background: url('{{ STATIC_URL }}replay-inactive.png') no-repeat 0 0;
+}
+
+a.replay:hover {
+    background: url('{{ STATIC_URL }}replay.png') no-repeat 0 0;
+}
+
+a.replay span {
+    position: absolute;
+    left: -999em;
+}

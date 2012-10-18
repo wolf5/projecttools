@@ -38,6 +38,14 @@
 	    document.title = hours + "h" + minutes + "m" + seconds + "s {{ currentCustomer.name }}";
 	}
 	
+	// Locks all command links (pause, resume etc.) to avoid duplicate requests.
+    function lockCommands() {
+        $("a.pauseresume, a.resume, a.pause, a.customerresume, a.replay").off("click");
+        $("a.pauseresume, a.resume, a.pause, a.customerresume, a.replay").click(function() {
+            return false;
+        });
+    }
+	
     // Sends a resume command via form submit
     function resume(sourceElement) {
         lockCommands();
@@ -107,12 +115,15 @@
         return false;
     }
     
-    // Locks all command links (pause, resume etc.) to avoid duplicate requests.
-    function lockCommands() {
-        $("a.pauseresume, a.resume, a.pause, a.customerresume").off("click");
-        $("a.pauseresume, a.resume, a.pause, a.customerresume").click(function() {
-            return false;
-        });
+    // Sends a replay command for a specific task entry via form submit
+    function replay(sourceElement) {
+        lockCommands();
+        var entryID = sourceElement.getAttribute("data-entry-id");
+        var entryInput = $("#replayform input#entry");
+        entryInput.val(entryID);
+        var replayForm = $("#replayform");
+        replayForm.submit();
+        return false;
     }
 	
 	// do when document gets loaded
@@ -171,7 +182,7 @@
 	        });
 	    {% endif %}
 	    
-	    // Attach handlers to pause and resume links
+	    // Attach UI handlers
 	    $("a.pauseresume").each(function() {
             $(this).click(function() {
                 pauseAndResume(this);
@@ -190,6 +201,11 @@
         $("a.customerresume").each(function() {
             $(this).click(function() {
                 customerResume(this);
+            });
+        });
+        $("a.replay").each(function() {
+            $(this).click(function() {
+                replay(this);
             });
         });
 	});
@@ -309,9 +325,9 @@
         	{% for entry in entries %}
         	   <tr class="{% if forloop.first %}current{% endif %} {% if entry.daily_total %}has_daily_total{% endif %}">
         		{% if entry.daily_total %}
-        		  <td class="has_daily_total"><a href="/customer/{{ entry.customer.id }}/report/">{{ entry.customer.name }}</a></td><td class="has_daily_total"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.m.Y H.i" }} - {{ entry.end|date:"d.m.Y H.i" }}</a></td><td class="has_daily_total"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%hh %mm" }}</a></td><td class="has_daily_total"><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%oh" }})</a></td><td class="comment has_daily_total"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td><td class="daily_total has_daily_total">{{ entry.daily_total|duration:"%Hh %mm" }} ({{ entry.daily_total|duration:"%oh" }})</td>
+        		  <td class="has_daily_total"><a href="#" class="replay" data-entry-id="{{ entry.id }}"><span>Replay</span></a>&nbsp;<a href="/customer/{{ entry.customer.id }}/report/">{{ entry.customer.name }}</a></td><td class="has_daily_total"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.m.Y H.i" }} - {{ entry.end|date:"d.m.Y H.i" }}</a></td><td class="has_daily_total"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%hh %mm" }}</a></td><td class="has_daily_total"><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%oh" }})</a></td><td class="comment has_daily_total"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td><td class="daily_total has_daily_total">{{ entry.daily_total|duration:"%Hh %mm" }} ({{ entry.daily_total|duration:"%oh" }})</td>
         		{% else %}
-        		  <td><a href="/customer/{{ entry.customer.id }}/report/">{{ entry.customer.name }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.m.Y H.i" }} - {{ entry.end|date:"d.m.Y H.i" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%hh %mm" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%oh" }})</a></td><td class="comment"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td><td>&nbsp;</td>
+        		  <td><a href="#" class="replay" data-entry-id="{{ entry.id }}"><span>Replay</span></a>&nbsp;<a href="/customer/{{ entry.customer.id }}/report/">{{ entry.customer.name }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.m.Y H.i" }} - {{ entry.end|date:"d.m.Y H.i" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%hh %mm" }}</a></td><td><a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%oh" }})</a></td><td class="comment"><a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a></td><td>&nbsp;</td>
         		{% endif %}
         		</tr>
         		{% if entry.daily_total %}
@@ -320,5 +336,12 @@
         	{% endfor %}
         </tbody>
     </table>
+</div>
+<div style="display:none">
+    <form action="" method="post" id="replayform">
+        {% csrf_token %}
+        <input type="hidden" id="entry" name="entry" value="" />
+        <input type="hidden" name="command" value="replay" />
+    </form>
 </div>
 {% endblock content %}
