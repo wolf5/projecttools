@@ -5,3 +5,8 @@ database.sqlite
 projecttools/sitestatic
 .settings
 .pydevproject
+projecttools/apache/*
+!projecttools/apache/projecttools_example.wsgi
+projecttools/settings*.py
+!projecttools/settings_example.py
+!projecttools/settings.py
