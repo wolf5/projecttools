@@ -28,8 +28,8 @@ def resume(user, customer, comment = "", delay = 0):
         newTaskEntry = Entry(owner = user, customer = customer, start = start, comment = comment)
         newTaskEntry.save()
     else:
-        # there is a task running, so check whether it is for the same customer
-        if topTaskEntry.customer != customer:
+        # there is a task running and either the customer or the comment has changed
+        if topTaskEntry.customer != customer or topTaskEntry.comment != comment:
             # not for the same customer, so finish the current task and start a new one
             topTaskEntry.end = datetime.now()
             topTaskEntry.save()
@@ -40,7 +40,7 @@ def resume(user, customer, comment = "", delay = 0):
             newTaskEntry = Entry(owner = user, customer = customer, start = start, comment = comment)
             newTaskEntry.save()
         else:
-            # for the same customer, so this is a duplicate request. do nothing.
+            # Nothing has changed, so we can keep the task running
             pass
     
 def pause(user):
