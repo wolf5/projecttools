@@ -9,7 +9,7 @@
         }
     }, 
     {
-        "pk": 8, 
+        "pk": 9, 
         "model": "contenttypes.contenttype", 
         "fields": {
             "model": "customer", 
@@ -18,7 +18,7 @@
         }
     }, 
     {
-        "pk": 9, 
+        "pk": 10, 
         "model": "contenttypes.contenttype", 
         "fields": {
             "model": "entry", 
@@ -36,7 +36,7 @@
         }
     }, 
     {
-        "pk": 7, 
+        "pk": 8, 
         "model": "contenttypes.contenttype", 
         "fields": {
             "model": "logentry", 
@@ -70,7 +70,16 @@
             "name": "session", 
             "app_label": "sessions"
         }
-    }, 
+    },
+    {
+        "pk": 7, 
+        "model": "contenttypes.contenttype", 
+        "fields": {
+            "model": "site", 
+            "name": "site", 
+            "app_label": "sites"
+        }
+    },  
     {
         "pk": 3, 
         "model": "contenttypes.contenttype", 
@@ -78,6 +87,14 @@
             "model": "user", 
             "name": "user", 
             "app_label": "auth"
+        }
+    },
+    {
+        "pk": 1, 
+        "model": "sites.site", 
+        "fields": {
+            "domain": "example.com", 
+            "name": "example.com"
         }
     }, 
     {
@@ -781,30 +798,30 @@
         }
     }, 
     {
-        "pk": 19, 
+        "pk": 22, 
         "model": "auth.permission", 
         "fields": {
             "codename": "add_logentry", 
             "name": "Can add log entry", 
-            "content_type": 7
+            "content_type": 8
         }
     }, 
     {
-        "pk": 20, 
+        "pk": 23, 
         "model": "auth.permission", 
         "fields": {
             "codename": "change_logentry", 
             "name": "Can change log entry", 
-            "content_type": 7
+            "content_type": 8
         }
     }, 
     {
-        "pk": 21, 
+        "pk": 24, 
         "model": "auth.permission", 
         "fields": {
             "codename": "delete_logentry", 
             "name": "Can delete log entry", 
-            "content_type": 7
+            "content_type": 8
         }
     }, 
     {
@@ -970,38 +987,11 @@
         }
     }, 
     {
-        "pk": 22, 
+        "pk": 25, 
         "model": "auth.permission", 
         "fields": {
             "codename": "add_customer", 
             "name": "Can add customer", 
-            "content_type": 8
-        }
-    }, 
-    {
-        "pk": 23, 
-        "model": "auth.permission", 
-        "fields": {
-            "codename": "change_customer", 
-            "name": "Can change customer", 
-            "content_type": 8
-        }
-    }, 
-    {
-        "pk": 24, 
-        "model": "auth.permission", 
-        "fields": {
-            "codename": "delete_customer", 
-            "name": "Can delete customer", 
-            "content_type": 8
-        }
-    }, 
-    {
-        "pk": 25, 
-        "model": "auth.permission", 
-        "fields": {
-            "codename": "add_entry", 
-            "name": "Can add entry", 
             "content_type": 9
         }
     }, 
@@ -1009,8 +999,8 @@
         "pk": 26, 
         "model": "auth.permission", 
         "fields": {
-            "codename": "change_entry", 
-            "name": "Can change entry", 
+            "codename": "change_customer", 
+            "name": "Can change customer", 
             "content_type": 9
         }
     }, 
@@ -1018,9 +1008,63 @@
         "pk": 27, 
         "model": "auth.permission", 
         "fields": {
+            "codename": "delete_customer", 
+            "name": "Can delete customer", 
+            "content_type": 9
+        }
+    }, 
+    {
+        "pk": 28, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_entry", 
+            "name": "Can add entry", 
+            "content_type": 10
+        }
+    }, 
+    {
+        "pk": 29, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_entry", 
+            "name": "Can change entry", 
+            "content_type": 10
+        }
+    }, 
+    {
+        "pk": 30, 
+        "model": "auth.permission", 
+        "fields": {
             "codename": "delete_entry", 
             "name": "Can delete entry", 
-            "content_type": 9
+            "content_type": 10
+        }
+    }, 
+    {
+        "pk": 19, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_site", 
+            "name": "Can add site", 
+            "content_type": 7
+        }
+    }, 
+    {
+        "pk": 20, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_site", 
+            "name": "Can change site", 
+            "content_type": 7
+        }
+    }, 
+    {
+        "pk": 21, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_site", 
+            "name": "Can delete site", 
+            "content_type": 7
         }
     }, 
     {

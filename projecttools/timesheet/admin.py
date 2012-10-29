@@ -1,5 +1,6 @@
 from models import Customer
 from models import Entry
+from django.contrib.sites.models import Site 
 from django.contrib import admin
 
 class OwnEntryAdmin(admin.ModelAdmin):
@@ -14,3 +15,4 @@ class OwnEntryAdmin(admin.ModelAdmin):
 
 admin.site.register(Customer)
 admin.site.register(Entry, OwnEntryAdmin)
+admin.site.unregister(Site)
