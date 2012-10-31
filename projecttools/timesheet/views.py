@@ -139,7 +139,7 @@ def clock(request):
 # Customer report view.
 # This view requires the user to be logged in.
 @login_required
-def customer_report(request, customer_id, format_identifier, year, month):
+def customer_report(request, customer_id, year, month, format_identifier):
     
     # coerce type
     if year:
@@ -199,7 +199,7 @@ def customer_report(request, customer_id, format_identifier, year, month):
     else:
         # Most recent at the top
         entries = entries.reverse()
-        return render(request, "timesheet/customer_report.html", {"currentCustomer": currentCustomer, "entries": entries, "customers": customers, "totalDuration": totalDuration, "availableYearsAndMonths": availableYearsAndMonths, "year": year, "month": month, "currentYearAndMonth": currentYearAndMonth, "availableYears": availableYears, "user": request.user});
+        return render(request, "timesheet/customer_report.html", {"currentCustomer": currentCustomer, "entries": entries, "customers": customers, "totalDuration": totalDuration, "availableYearsAndMonths": availableYearsAndMonths, "year": year, "month": month, "currentYearAndMonth": currentYearAndMonth, "availableYears": availableYears, "user": request.user, "serverTime": datetime.now()});
 
 @login_required
 def monthly_report_csv(request, year, month):
