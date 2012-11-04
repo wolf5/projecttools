@@ -21,3 +21,8 @@ TEMPLATE_DIRS = (
 )
 
 STATIC_ROOT = "/var/www/projecttools-example/projecttools/sitestatic/"
+LOGIN_URL = "/example/login/"
+LOGIN_REDIRECT_URL = "/example/"
+LOGOUT_URL = "/example/"
+STATIC_URL = "/example/static/"
+ADMIN_MEDIA_PREFIX = "/example/static/admin/"
