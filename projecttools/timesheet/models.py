@@ -13,7 +13,7 @@ class Entry(models.Model):
     customer = models.ForeignKey(Customer)
     start = models.DateTimeField()
     end = models.DateTimeField(null = True, blank = True)
-    comment = models.CharField(blank = True, max_length = 65535)
+    comment = models.TextField(blank = True)
     owner = models.ForeignKey(User)
 
     def __unicode__(self):
