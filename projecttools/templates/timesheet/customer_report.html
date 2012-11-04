@@ -7,15 +7,15 @@
 
 {% block topmenuleft %}
 	<div class="topmenuitem">
-	    <a href="/">Uhr</a>
+	    <a href="{% url clock %}">Uhr</a>
 	</div>
 	{% if currentCustomer %}
 		<div class="topmenuitem current">
-		    <a href="/customer/{{ currentCustomer.id }}/report/{{ serverTime|date:'Y' }}/{{ serverTime|date:'m' }}/">Report</a>
+		    <a href="{% url customer_report_year_month currentCustomer.id serverTime|date:'Y' serverTime|date:'m' %}">Report</a>
 		</div>
 	{% endif %}
 	<div class="topmenuitem lastmenuitem">
-	    <a href="/admin/">Admin</a>
+	    <a href="{% url admin:index %}">Admin</a>
 	</div>
 {% endblock topmenuleft %}
 
@@ -47,8 +47,8 @@
 	<div class="section">Reports</div>
 	<table>
 		<tbody>
-			<tr><td><a href="/reports/monthly.csv/{{ currentYearAndMonth|date:'Y' }}/{{ currentYearAndMonth|date:'m' }}">Monatsreport<br>alle Kunden<br>{{ currentYearAndMonth|date:"F" }} {{ currentYearAndMonth|date:"Y" }} (CSV)</a></td></tr>
-			<tr><td><a href="/reports/timestatistics.csv/{{ currentYearAndMonth|date:'Y' }}/{{ currentYearAndMonth|date:'m' }}">Arbeitszeitstatistik<br/>{{ currentYearAndMonth|date:"F" }} {{ currentYearAndMonth|date:"Y" }} (CSV)</a></td></tr>
+			<tr><td><a href="{% url monthly_report_csv currentYearAndMonth|date:'Y' currentYearAndMonth|date:'m' %}">Monatsreport<br>alle Kunden<br>{{ currentYearAndMonth|date:"F" }} {{ currentYearAndMonth|date:"Y" }} (CSV)</a></td></tr>
+			<tr><td><a href="{% url monthly_time_statistics_csv currentYearAndMonth|date:'Y' currentYearAndMonth|date:'m' %}">Arbeitszeitstatistik<br/>{{ currentYearAndMonth|date:"F" }} {{ currentYearAndMonth|date:"Y" }} (CSV)</a></td></tr>
 		</tbody>
 	</table>
 	{% endif %}
@@ -57,7 +57,7 @@
         <tbody>
         	{% for customer in customers %}
                 {% if customer != currentCustomer %}
-                	<tr><td><a href="/customer/{{ customer.id }}/report">{{ customer.name }}</a></td></tr>
+                	<tr><td><a href="{% url customer_report customer.id %}">{{ customer.name }}</a></td></tr>
                 {% else %}
                 	<tr><td><a href="/customer/{{ customer.id }}/report" class="current">{{ customer.name }}</a></td></tr>
                 {% endif %}
@@ -68,7 +68,7 @@
     <table>
         <tbody>
             {% for availableYearAndMonth in availableYearsAndMonths %}
-    			<tr><td><a href="/customer/{{ currentCustomer.id }}/report/{{ availableYearAndMonth|date:'Y' }}/{{ availableYearAndMonth|date:'m' }}/">{{ availableYearAndMonth|date:"F Y" }}</a></td></tr>
+    			<tr><td><a href="{% url customer_report_year_month currentCustomer.id availableYearAndMonth|date:'Y' availableYearAndMonth|date:'m' %}">{{ availableYearAndMonth|date:"F Y" }}</a></td></tr>
     		{% endfor %}
         </tbody>
     </table>
@@ -76,7 +76,7 @@
     <table>
         <tbody>
             {% for availableYear in availableYears %}
-    			<tr><td><a href="/customer/{{ currentCustomer.id }}/report/{{ availableYear|date:'Y' }}/">{{ availableYear|date:"Y" }}</a></td></tr>
+    			<tr><td><a href="{% url customer_report_year currentCustomer.id availableYear|date:'Y' %}">{{ availableYear|date:"Y" }}</a></td></tr>
     		{% endfor %}
         </tbody>
     </table>
@@ -87,20 +87,20 @@
         	{% for entry in entries %}
                 <tr class="current">
                 	<td class="comment">
-                		<a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.comment }}</a>
+                		<a href="{% url admin:timesheet_entry_change entry.id %}">{{ entry.comment }}</a>
                 	</td>
                 	<td>
-                		<a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.start|date:"d.m.Y H.i" }}</a>
+                		<a href="{% url admin:timesheet_entry_change entry.id %}">{{ entry.start|date:"d.m.Y H.i" }}</a>
                 	</td>
                 	<td>-</td>
                 	<td>
-                		<a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.end|date:"d.m.Y H.i" }}</a>
+                		<a href="{% url admin:timesheet_entry_change entry.id %}">{{ entry.end|date:"d.m.Y H.i" }}</a>
                 	</td>
                 	<td class="hoursandminutes">
-                		<a href="/admin/timesheet/entry/{{ entry.id }}/">{{ entry.duration|duration:"%Hh %mm" }}</a>
+                		<a href="{% url admin:timesheet_entry_change entry.id %}">{{ entry.duration|duration:"%Hh %mm" }}</a>
                 	</td>
                 	<td class="decimalhour">
-                		<a href="/admin/timesheet/entry/{{ entry.id }}/">({{ entry.duration|duration:"%Oh" }})</a>
+                		<a href="{% url admin:timesheet_entry_change entry.id %}">({{ entry.duration|duration:"%Oh" }})</a>
                 	</td>
                 </tr>
             {% endfor %}
@@ -109,9 +109,9 @@
     <br/>
     {% if year %}
     	{% if month %}
-    		<a href="/customer/{{ currentCustomer.id }}/report.csv/{{ year }}/{{ month }}/" class="download">Als CSV herunterladen</a>
+    		<a href="{% url customer_report_year_month_csv currentCustomer.id year month %}" class="download">Als CSV herunterladen</a>
     	{% else %}
-    		<a href="/customer/{{ currentCustomer.id }}/report.csv/{{ year }}/" class="download">Als CSV herunterladen</a>
+    		<a href="{% url customer_report_year_csv currentCustomer.id year %}" class="download">Als CSV herunterladen</a>
     	{% endif %}        	
     {% else %}
     	<a href="/customer/{{ currentCustomer.id }}/report.csv/" class="download">Als CSV herunterladen</a>
