@@ -22,9 +22,9 @@
 {% block topmenuright %}
 	<div class="topmenuitem lastmenuitem">
 		{% if user.first_name or user.last_name %}
-			<a href="/logout/">{{ user.first_name }} {{ user.last_name }} abmelden.</a>
+			<a href="{% url logout %}">{{ user.first_name }} {{ user.last_name }} abmelden.</a>
 		{% else %}
-			<a href="/logout/">{{ user.username }} abmelden.</a>
+			<a href="{% url logout %}">{{ user.username }} abmelden.</a>
 		{% endif %}
 	</div>
 {% endblock topmenuright %}
@@ -59,7 +59,7 @@
                 {% if customer != currentCustomer %}
                 	<tr><td><a href="{% url customer_report customer.id %}">{{ customer.name }}</a></td></tr>
                 {% else %}
-                	<tr><td><a href="/customer/{{ customer.id }}/report" class="current">{{ customer.name }}</a></td></tr>
+                	<tr><td><a href="{% url customer_report customer.id %}" class="current">{{ customer.name }}</a></td></tr>
                 {% endif %}
             {% endfor %}
         </tbody>
@@ -114,7 +114,7 @@
     		<a href="{% url customer_report_year_csv currentCustomer.id year %}" class="download">Als CSV herunterladen</a>
     	{% endif %}        	
     {% else %}
-    	<a href="/customer/{{ currentCustomer.id }}/report.csv/" class="download">Als CSV herunterladen</a>
+    	<a href="{% url customer_report_csv currentCustomer.id %}" class="download">Als CSV herunterladen</a>
     {% endif %}
 </div>
 
