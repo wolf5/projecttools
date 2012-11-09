@@ -4,7 +4,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('Timo Wuersch', 'twuersch@gmail.com'),
+    ('Sylon SAAS Reports', 'reports@sylon.net'),
 )
 
 MANAGERS = ADMINS
@@ -146,5 +146,4 @@ LOGGING = {
     }
 }
 
-LOGIN_URL = "/login/"
-LOGIN_REDIRECT_URL = "/"
+SEND_BROKEN_LINK_EMAILS = True
