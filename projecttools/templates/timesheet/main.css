@@ -289,7 +289,7 @@ p {
 div.warning {
     color: rgb(222, 95, 0);
     background-color: rgb(255, 238, 212);
-    border: 2px solid rgb(254, 182, 70);
+    border: 1px solid rgb(254, 182, 70);
     padding: 5px;
 }
 
