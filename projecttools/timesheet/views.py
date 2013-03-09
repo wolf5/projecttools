@@ -29,12 +29,21 @@ def clock(request):
 
     # POST request
     if request.method == "POST":
-        # if we only change the comment
+        # if we change the comment or create a new entry with the new comment
         if "comment" in request.POST and not "command" in request.POST:
-            topTaskEntry = helpers.getCurrentTaskEntry(request.user)
-            if topTaskEntry != None:
-                topTaskEntry.comment = request.POST["comment"]
-                topTaskEntry.save()
+            # We're only changing the comment
+            if request.POST["commentmode"] == "changecomment":
+                topTaskEntry = helpers.getCurrentTaskEntry(request.user)
+                if topTaskEntry != None:
+                    topTaskEntry.comment = request.POST["comment"]
+                    topTaskEntry.save()
+            
+            # we're creating a new entry with the new comment
+            elif request.POST["commentmode"] == "newentrywithcomment":
+                topTaskEntry = helpers.getCurrentTaskEntry(request.user)
+                if topTaskEntry:
+                    helpers.pause(request.user)
+                    helpers.resume(request.user, topTaskEntry.customer, request.POST["comment"])
         
         # if we pause/resume a task
         if "command" in request.POST:
@@ -61,7 +70,7 @@ def clock(request):
                     helpers.resume(request.user, customer, comment)
             
             # replay command (re-use customer and comment of an already 
-            # existing entry
+            # existing entry)
             elif request.POST["command"] == COMMAND_REPLAY:
                 if "entry" in request.POST:
                     entry_id = int(request.POST["entry"])

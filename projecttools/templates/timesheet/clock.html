@@ -9,7 +9,7 @@
 {% endblock title %}
 
 {% block js %}
-	// this holds the global timeout ID for the delay popup
+	// this holds the global timeout ID for the popups
 	var delaypopupTimeoutID = undefined;
 
 	// This is an attempt to measure the time difference between the server
@@ -125,6 +125,26 @@
         replayForm.submit();
         return false;
     }
+    
+    // Change the comment by submitting the comment form
+    function changeComment() {
+        $("input#commentmode").val("changecomment");
+        $("form#commentform").submit();
+    }
+    
+    // Create a new entry with the new comment by setting a flag and submitting the comment form
+    function newEntryWithComment() {
+        $("input#commentmode").val("newentrywithcomment");
+        $("form#commentform").submit();
+    }
+    
+    // Cancel entering the comment
+    function cancelComment() {
+        {% if topTaskEntry %}
+            $("input#comment").blur();
+            $("input#comment").val("{{ topTaskEntry.comment|escapejs }}");
+        {% endif %}
+    }
 	
 	// do when document gets loaded
 	$(document).ready(function() {
@@ -144,6 +164,15 @@
 	    	}, 1500);
 	    });
 	    
+	    // Hide the comment popup and set up its fadeIn/fadeOut
+        $("div#commentpopup").hide();
+        $("input#comment").focus(function() {
+            $("div#commentpopup").fadeIn(100);
+        });
+        $("input#comment").blur(function() {
+            $("div#commentpopup").fadeOut(500);
+        });
+	    
 	    // display/start clock, depending on state
 	    {% if topTaskEntry %}
 	    	// The "-1" is necessary because the months (and only the months!) are zero based.
@@ -159,25 +188,57 @@
 	    {% endif %}
 	    
 	    {% if state == "running" %}
+		    // Prevent default form submit on enter
+		    $("form#commentform").keypress(function(event) {
+		        if (event.which == 13) {
+		            return false;
+		        }
+		    });
 		    // if the clock is running, change the comment if we press enter...
-			$("input#comment").keypress(function(event) {
+			$("input#comment").keyup(function(event) {
 		    	if (event.which == 13) {
-		    		$("form#commentform").submit();
+		    	    event.preventDefault();
+                    event.stopPropagation();
+		    	    if (event.shiftKey) {
+		    	        newEntryWithComment();
+		    	        return false;
+		    	    } else {
+		    	        changeComment();
+		    	        return false;
+		    	    }
+		    	} else if (event.which == 27) {
+		    	    // cancel if we press esc.
+		    	    cancelComment();
+		    	    return false;
 		    	}
 		    });
 		
 		    // ...or if we click outside the form.
-		    $("input#comment").blur(function() {
-		    	$("form#commentform").submit();
+		    $("input#comment").click(function(event) {
+                event.stopPropagation();
+                return false;
+            });
+		    $("html").click(function() {
+		        {% if topTaskEntry %}
+                    if ($("input#comment").val() != "{{ topTaskEntry.comment|escapejs }}") {
+                        changeComment();
+                    }
+                {% else %}
+                    changeComment();
+                {% endif %}
 		    });
 	    {% else %}
 	    	// if the clock is not running, start a new task if we change the comment and press enter...
-	    	$("input#comment").keypress(function(event) {
+	    	$("input#comment").keydown(function(event) {
 	        	if (event.which == 13) {
+	        	    event.preventDefault();
 	        		$("input#comment").blur();
 	        		$("#resumeform").append($('<input>').attr({type: "hidden", name: "comment", value: $("input#comment").val()}));
 	        		$("#resumeform").submit();
 	        		return false;
+	        	} else if (event.which == 27) {
+	        	    cancelComment();
+	        	    return false;
 	        	}
 	        });
 	    {% endif %}
@@ -208,6 +269,29 @@
                 replay(this);
             });
         });
+        {% if state == "running" %}
+            $("a#changecomment").click(function(event) {
+                changeComment();
+                event.stopPropagation();
+            });
+        {% endif %}
+        $("a#newentrywithcomment").click(function(event) {
+            newEntryWithComment();
+            event.stopPropagation();
+        });
+        $("a#cancelcomment").click(function(event) {
+            cancelComment();
+            event.stopPropagation();
+        });
+        
+        {% if state == "paused" %}
+            $("html").click(function() {
+                cancelComment();
+            });
+            $("input#comment").click(function(event) {
+                event.stopPropagation();
+            });
+        {% endif %}
 	});
 {% endblock js %}
 
@@ -249,8 +333,10 @@
     	        	<input type="hidden" id="delay" name="delay" value="0"/>
     	        </form>
     	    </div>
-    	    <div id="delaypopup">
-    	        Ich habe vergessen, mich vor <a href="#" class="resume" data-delay="5">5m</a> <a href="#" class="resume" data-delay="10">10m</a> <a href="#" class="resume" data-delay="15">15m</a> <a href="#" class="resume" data-delay="30">30m</a> <a href="#" class="resume" data-delay="60">1h</a> <a href="#" class="resume" data-delay="90">1.5h</a> <a href="#" class="resume" data-delay="120">2h</a> einzustempeln.
+    	    <div>
+    	        <div id="delaypopup">
+                    Ich habe vergessen, mich vor <a href="#" class="resume" data-delay="5">5m</a> <a href="#" class="resume" data-delay="10">10m</a> <a href="#" class="resume" data-delay="15">15m</a> <a href="#" class="resume" data-delay="30">30m</a> <a href="#" class="resume" data-delay="60">1h</a> <a href="#" class="resume" data-delay="90">1.5h</a> <a href="#" class="resume" data-delay="120">2h</a> einzustempeln.
+                </div>
     	    </div>
     	{% else %}
     		<div id="pauseresumebutton">
@@ -282,6 +368,19 @@
 		{% else %}
 			<input id="comment" type="text" name="comment" value=""/>
 		{% endif %}
+		{% if state == "running" %}
+		    <div id="commentpopup">
+		        <a href="#" id="changecomment">Nur Kommentar ändern</a> Eingabe ↵ oder Mausklick<br/>
+		        <a href="#" id="newentrywithcomment">Neuen Eintrag erstellen</a> Umschalt ⇧ + Eingabe ↵<br/>
+		        <a href="#" id="cancelcomment">Abbruch</a> Esc
+		    </div>
+		{% else %}
+		    <div id="commentpopup">
+                <a href="#" id="newentrywithcomment">Start mit diesem Kommentar</a> Eingabe ↵<br/>
+                <a href="#" id="cancelcomment">Abbruch</a> Esc
+            </div>
+		{% endif %}
+		<input type="hidden" id="commentmode" name="commentmode" value="" />
    </form>
 </div>
 <div class="leftlist">

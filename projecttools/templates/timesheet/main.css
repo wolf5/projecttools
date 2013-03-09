@@ -102,11 +102,6 @@ div#pauseresumebutton {
     vertical-align: bottom;
 }
 
-div#delaypopup {
-    display: inline-block;
-    margin: 0px 0px 0px 10px;
-}
-
 div.reportheading {
     font-size: 250%;
     margin: 20px 0px 0px 0px;
@@ -271,6 +266,21 @@ div#delaypopup {
     display: inline-block;
     color: rgb(158, 158, 158);
     vertical-align: bottom;
+    margin: 0px 0px 0px 10px;
+    position: absolute;
+    margin-top: -15px;
+    margin-left: 66px;
+}
+
+div#commentpopup {
+    font-size: 85%;
+    display: inline-block;
+    color: rgb(158, 158, 158);
+    vertical-align: bottom;
+    margin: 0px 0px 0px 10px;
+    position: absolute;
+    margin-top: -41px;
+    margin-left: 508px;
 }
 
 td.comment {
