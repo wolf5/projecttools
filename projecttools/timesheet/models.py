@@ -17,7 +17,25 @@ class Entry(models.Model):
     owner = models.ForeignKey(User)
 
     def __unicode__(self):
-        return self.customer.name
+        text = ""
+        text += self.owner.username
+        text += ": "
+        text += self.customer.name
+        
+        if self.end:
+            text += " von "
+        else:
+            text += " ab "
+            
+        text += self.start.strftime("%d.%m.%Y %H:%M:%S")
+        
+        if self.end:
+            text += " bis " + self.end.strftime("%d.%m.%Y %H:%M:%S")
+            
+        if self.comment and self.comment != "":
+            text += " (" + self.comment + ")"
+        
+        return text
 
     def duration(self):
         if self.end != None:
