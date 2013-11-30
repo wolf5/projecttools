@@ -10,3 +10,5 @@ projecttools/apache/*
 projecttools/settings*.py
 !projecttools/settings_example.py
 !projecttools/settings.py
+virtualenv/*
+!virtualenv/readme.txt
